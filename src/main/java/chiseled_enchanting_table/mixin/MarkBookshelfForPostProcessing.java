@@ -14,7 +14,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 
 @Mixin(StructurePiece.class)
-public class AlterStructure {
+public class MarkBookshelfForPostProcessing {
     // net.minecraft.world.StructureWorldAccess net.minecraft.block.BlockState int int int net.minecraft.util.math.BlockBox
     @Inject(method = "addBlock(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/block/BlockState;IIILnet/minecraft/util/math/BlockBox;)V", at = @At("HEAD"))
     private void replaceBookShelf(CallbackInfo  ci, @Local(ordinal = 0) LocalRef<BlockState> localRef) {

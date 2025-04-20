@@ -3,11 +3,11 @@
 	"package": "chiseled_enchanting_table.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"MarkBookshelfForPostProcessing",
 		"RemoveAnvilEnchantUpgrade",
-		"AlterStructure",
-		"AddStruturePostProcessing",
-		"AddStruturePostProcessing2",
-		"AddChiseledBookshelfWoodlandMansion"
+		"ReplaceBookshelfMansion",
+		"ReplaceBookshelfStronghold",
+		"ReplaceBookshelfStructure"
 	],
 	"injectors": {
 		"defaultRequire": 1
