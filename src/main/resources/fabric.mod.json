@@ -1,0 +1,48 @@
+{
+	"schemaVersion": 1,
+	"id": "chiseled-enchanting-table",
+	"version": "0.1.0",
+	"name": "Chiseled Enchanting Table",
+	"description": "A rework of enchantment progression. You can now enchant your gear using Enchanted book placed in nearby chiseld bookshelves using a chiseled enchanting table",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/chiseled-enchanting-table/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "chiseled_enchanting_table.ChiseledEnchantingTable",
+				"adapter": "kotlin"
+			}
+		],
+		"client": [
+			{
+				"value": "chiseled_enchanting_table.ChiseledEnchantingTableClient",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"chiseled-enchanting-table.mixins.json",
+		{
+			"config": "chiseled-enchanting-table.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.16.12",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
