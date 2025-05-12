@@ -27,7 +27,7 @@ that can contain book and enchanted book
 
 - improve fishing loot table
 
-- X Scaling enchant cost based on matearial tier (gold, iron, diamond, netherite) (might not be relevant because enchanting via book is free)
+- X Scaling enchant cost based on material tier (gold, iron, diamond, netherite) (might not be relevant because enchanting via book is free)
 
 - Add configuration
 
