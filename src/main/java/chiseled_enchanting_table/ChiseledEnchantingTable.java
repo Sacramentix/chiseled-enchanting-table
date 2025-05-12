@@ -3,6 +3,9 @@ package chiseled_enchanting_table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import chiseled_enchanting_table.modifyChestLootTable.ReworkEnchantedBookChestLoot;
+import chiseled_enchanting_table.modifyChestLootTable.abandoned_mineshaft.DepthBasedEfficiency;
+import chiseled_enchanting_table.modifyChestLootTable.RemoveEnchantedBooksFunction;
 import chiseled_enchanting_table.registry.BlockRegistry;
 import chiseled_enchanting_table.registry.EntityRegistry;
 import chiseled_enchanting_table.registry.ScreenHandlerRegistry;
@@ -21,11 +24,13 @@ public class ChiseledEnchantingTable implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Chiseling the enchant system!");
 		// SERVER_CONFIG = ConfigApiJava.registerAndLoadConfig(ServerConfig::new, RegisterType.BOTH);
-		
 		BlockRegistry.init();
 		EntityRegistry.init();
 		ScreenHandlerRegistry.init();
 		StructureProcessorRegistry.init();
+		RemoveEnchantedBooksFunction.register();
+		DepthBasedEfficiency.register();
+		ReworkEnchantedBookChestLoot.init();
 	}
 
 	

@@ -3,6 +3,7 @@
 	"package": "chiseled_enchanting_table.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"DisableBookEnchanting",
 		"MarkBookshelfForPostProcessing",
 		"RemoveAnvilEnchantUpgrade",
 		"ReplaceBookshelfMansion",
