@@ -17,20 +17,29 @@ LIST OF THING! :
 - ✅ structure spawn with chiseled bookshelves (it replace all classic bookshelves programmatically)
 that can contain book and enchanted book
 
+- ✅ Add crating recipe for chiseled enchanting table
+
+- ✅ can consume enchanted book in infuse slot to enchant without xp cost
+
 - 🚧 rework chest loot table enchanted book
 
 - 🚧 add coherent loot table to chiseled bookshelves
 
 - improve fishing loot table
 
-- Scaling enchant cost based on matearial tier (gold, iron, diamond, netherite)
+- X Scaling enchant cost based on matearial tier (gold, iron, diamond, netherite) (might not be relevant because enchanting via book is free)
 
 - Add configuration
 
 - Add data driven configuration
 
-- Add crating recipe for chiseled enchanting table
+- handle Chiseled enchanting table ui scrollbar click
+
+- add advancement :
+    - Advancement for crating the table
+    - Advancement for unlock enchant by placing them in nearby chiseled bookshelf
+    - Advancement for having the table with all enchant unlock at once
+    - Advancement for adding all enchant to a book using the table
+
 
 - Chiseled enchanting table should work with lectern ?
-
-- can consume enchanted book in infuse slot to enchant without xp cost

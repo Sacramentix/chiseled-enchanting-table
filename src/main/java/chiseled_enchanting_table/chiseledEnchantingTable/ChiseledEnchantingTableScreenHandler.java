@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -104,7 +105,78 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
         });
     }
 
+	public void applyEnchantementFromBook(ApplyEnchantmentPayload payload) {
+		var enchanted_book = this.inventory.getStack(COST_SLOT);
+		var available_enchantments = 
+			EnchantmentHelper.getEnchantments(enchanted_book)
+				.getEnchantmentEntries()
+				.stream()
+				.map(x->{
+					return new EnchantmentWithLevel(
+						EnchantmentWithLevel.EnchantmentToIdentifier(x.getKey().value(), this.player.getWorld()),
+						x.getIntValue()
+					);
+				});
+
+		var exist = available_enchantments
+			.filter((e)-> 
+				payload.enchantment_id.equals(e.enchantment_id()) &&
+				payload.enchantment_level == e.enchantment_level()
+			).findAny();
+		if (!exist.isPresent()) return;
+		var enchantable_item = this.inventory.getStack(ENCHANTABLE_SLOT);
+		var enchantment_level = payload.enchantment_level;
+		var enchantment = EnchantmentWithLevel.IdentifierToEnchantment(payload.enchantment_id, this.world);
+		var enchantment_entry = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(payload.enchantment_id, this.world);
+		if (!(enchantable_item.isOf(Items.BOOK) || enchantable_item.isOf(Items.ENCHANTED_BOOK) || enchantment.isSupportedItem(enchantable_item))) return;
+
+		// if (!applyEnchantementCondition(payload)) return;
+		var new_enchanted_book_enchants = new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
+		EnchantmentHelper.getEnchantments(enchanted_book)
+			.getEnchantmentEntries().stream()
+			.filter(e->!EnchantmentWithLevel.EnchantmentToIdentifier(e.getKey().value(), this.player.getWorld()).equals(payload.enchantment_id))
+			.forEach(e->new_enchanted_book_enchants.add(e.getKey(), e.getIntValue()));
+		EnchantmentHelper.set(
+			enchanted_book,
+			new_enchanted_book_enchants.build()
+		);
+
+		if (!EnchantmentHelper.hasEnchantments(enchanted_book)) {
+			this.inventory.setStack(COST_SLOT, enchanted_book.copyComponentsToNewStack(Items.BOOK, 1));
+		}
+		
+		// Remove conflicting enchantments and adjust levels if necessary
+		var existingEnchantments = new HashSet<>(EnchantmentHelper.getEnchantments(enchantable_item).getEnchantmentEntries());
+		existingEnchantments.removeIf(existingEnchantment -> !Enchantment.canBeCombined(existingEnchantment.getKey(), enchantment_entry));
+		existingEnchantments.add(
+			Object2IntMaps.singleton(enchantment_entry, enchantment_level).object2IntEntrySet().iterator().next()
+		);
+		var newEnchantmentsComponent = new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
+		existingEnchantments.forEach(e->newEnchantmentsComponent.add(e.getKey(), e.getIntValue()));
+		if (enchantable_item.isOf(Items.BOOK)) {
+			var stack = enchantable_item.copyComponentsToNewStack(Items.ENCHANTED_BOOK, 1);
+			this.inventory.setStack(ENCHANTABLE_SLOT, stack);
+			enchantable_item  = this.inventory.getStack(ENCHANTABLE_SLOT);
+		}
+		EnchantmentHelper.set(enchantable_item, newEnchantmentsComponent.build());
+		// enchantable_item.set(DataComponentTypes.ENCHANTMENTS, newEnchantmentsComponent.build());
+		this.inventory.markDirty();
+		this.player.incrementStat(Stats.ENCHANT_ITEM);
+		this.world.playSound(
+			null, 
+			this.player.getBlockPos(), 
+			net.minecraft.sound.SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 
+			net.minecraft.sound.SoundCategory.PLAYERS, 
+			2.0F, 
+			this.world.random.nextFloat() * 0.1F + 0.9F
+		);
+	}
+
 	public void applyEnchantement(ApplyEnchantmentPayload payload) {
+		if (this.inventory.getStack(COST_SLOT).isOf(Items.ENCHANTED_BOOK)) {
+			applyEnchantementFromBook(payload);
+			return;
+		}
 		var exist = this.unlocked_enchantements.stream()
 			.filter((e)-> 
 				payload.enchantment_id.equals(e.enchantment_id()) &&
@@ -115,19 +187,25 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 		var enchantment_level = payload.enchantment_level;
 		var enchantment = EnchantmentWithLevel.IdentifierToEnchantment(payload.enchantment_id, this.world);
 		var enchantment_entry = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(payload.enchantment_id, this.world);
-		if (!enchantment.isSupportedItem(enchantable_item)) return;
+		if (!(enchantable_item.isOf(Items.BOOK) || enchantable_item.isOf(Items.ENCHANTED_BOOK) || enchantment.isSupportedItem(enchantable_item))) return;
 
 		if (!applyEnchantementCondition(payload)) return;
+
 		// Remove conflicting enchantments and adjust levels if necessary
-		var enchantmentsComponent = enchantable_item.get(DataComponentTypes.ENCHANTMENTS);
-		var existingEnchantments = new HashSet<>(enchantmentsComponent.getEnchantmentEntries());
+		var existingEnchantments = new HashSet<>(EnchantmentHelper.getEnchantments(enchantable_item).getEnchantmentEntries());
 		existingEnchantments.removeIf(existingEnchantment -> !Enchantment.canBeCombined(existingEnchantment.getKey(), enchantment_entry));
 		existingEnchantments.add(
 			Object2IntMaps.singleton(enchantment_entry, enchantment_level).object2IntEntrySet().iterator().next()
 		);
 		var newEnchantmentsComponent = new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
 		existingEnchantments.forEach(e->newEnchantmentsComponent.add(e.getKey(), e.getIntValue()));
-		enchantable_item.set(DataComponentTypes.ENCHANTMENTS, newEnchantmentsComponent.build());
+		if (enchantable_item.isOf(Items.BOOK)) {
+			var stack = enchantable_item.copyComponentsToNewStack(Items.ENCHANTED_BOOK, 1);
+			this.inventory.setStack(ENCHANTABLE_SLOT, stack);
+			enchantable_item  = this.inventory.getStack(ENCHANTABLE_SLOT);
+		}
+		EnchantmentHelper.set(enchantable_item, newEnchantmentsComponent.build());
+		// enchantable_item.set(DataComponentTypes.ENCHANTMENTS, newEnchantmentsComponent.build());
 		this.inventory.markDirty();
 		this.player.incrementStat(Stats.ENCHANT_ITEM);
 		this.world.playSound(
@@ -378,6 +456,7 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 
 	@Override
 	public void onContentChanged(Inventory inventory) {
+		System.out.println("CHANGED !");
 		if (this.onContentChangedCallback != null) {
 			this.onContentChangedCallback.run();
 		}
@@ -396,24 +475,41 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 			ItemStack clickedStack = this.getSlot(slotIndex).getStack();
 			if (clickedStack.isEmpty()) return;
 			if ((slotIndex == COST_SLOT) || (slotIndex == ENCHANTABLE_SLOT) ) {
+
 				if (!this.insertItem(this.getSlot(slotIndex).getStack(), 2, 38, true)) {
 					return;
 				}
-				// this.getSlot(slotIndex).setStack(ItemStack.EMPTY);
+				this.getSlot(slotIndex).setStack(ItemStack.EMPTY);
 				return;
 			}
 			var clickedStackNoEnchant = clickedStack.copy();
 			clickedStackNoEnchant.set(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
-			if (clickedStackNoEnchant.isEnchantable()) {
-				ItemStack tempStack = clickedStack.copy();
+			var isBook = clickedStackNoEnchant.isOf(Items.BOOK) || clickedStackNoEnchant.isOf(Items.ENCHANTED_BOOK);
+			// Check if the stack is Enchantable if it would have no enchant
+			// Item with enchant are not enchantable by default
+			if (clickedStackNoEnchant.isEnchantable() || (isBook && !this.getSlot(ENCHANTABLE_SLOT).hasStack())) {
+				var tempStack = clickedStack.copy();
 				this.getSlot(slotIndex).setStack(this.getSlot(ENCHANTABLE_SLOT).getStack());
 				this.getSlot(ENCHANTABLE_SLOT).setStack(tempStack);
+
+				if (this.getSlot(ENCHANTABLE_SLOT).getStack().getCount() > 1) {
+					var overflow = this.getSlot(ENCHANTABLE_SLOT).getStack().copy();
+					overflow.setCount(overflow.getCount() - 1);
+					this.getSlot(ENCHANTABLE_SLOT).getStack().setCount(1);
+					if (!this.getSlot(slotIndex).hasStack()) {
+						this.getSlot(slotIndex).setStack(overflow);
+					} else {
+						if (!this.insertItem(overflow, 2, 38, true)) {
+							this.player.dropItem(overflow, false);
+						}
+					}
+				}
 			} else {
 				if (!this.getSlot(COST_SLOT).hasStack()) {
 					this.getSlot(COST_SLOT).setStack(clickedStack.copy());
 					clickedStack.setCount(0);
 				} else {
-					ItemStack costSlotStack = this.getSlot(COST_SLOT).getStack();
+					var costSlotStack = this.getSlot(COST_SLOT).getStack();
 					if (costSlotStack.isEmpty()) {
 						this.getSlot(COST_SLOT).setStack(clickedStack.copy());
 						clickedStack.setCount(0);
@@ -421,7 +517,7 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 						this.insertItem(clickedStack, COST_SLOT, COST_SLOT+1, false);
 					} else {
 						// Swap the stacks if they are different
-						ItemStack tempStack = costSlotStack.copy();
+						var tempStack = costSlotStack.copy();
 						this.getSlot(COST_SLOT).setStack(clickedStack.copy());
 						this.getSlot(slotIndex).setStack(tempStack);
 					}

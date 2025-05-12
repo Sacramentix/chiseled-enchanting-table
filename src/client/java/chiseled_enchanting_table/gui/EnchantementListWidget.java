@@ -1,6 +1,7 @@
 package chiseled_enchanting_table.gui;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,8 +13,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -177,9 +181,24 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
         this.clearEntries();
 
         this.enchantable_item = enchantable_item;
-        unlocked_enchantements.stream().filter(enchantWithLevel->{
+        var enchantFromBook = cost_item_stack.isOf(Items.ENCHANTED_BOOK);
+        var available_enchantements = 
+            enchantFromBook ? EnchantmentHelper.getEnchantments(cost_item_stack)
+                                                                            .getEnchantmentEntries()
+                                                                            .stream()
+                                                                            .map(x->{
+                                                                                return new EnchantmentWithLevel(
+                                                                                    EnchantmentWithLevel.EnchantmentToIdentifier(x.getKey().value(), this.player.getWorld()),
+                                                                                    x.getIntValue()
+                                                                                );
+                                                                            })
+                                                                            .collect(Collectors.toSet()) :
+            cost_item_stack.isOf(Items.BOOK) ? new HashSet<EnchantmentWithLevel>() :
+            unlocked_enchantements;
+
+        available_enchantements.stream().filter(enchantWithLevel->{
             var enchant = EnchantmentWithLevel.IdentifierToEnchantment(enchantWithLevel.enchantment_id(), this.player.getWorld());
-            return enchant.isSupportedItem(enchantable_item);
+            return enchantable_item.isOf(Items.BOOK) || enchantable_item.isOf(Items.ENCHANTED_BOOK) || enchant.isSupportedItem(enchantable_item);
         }).sorted((e1, e2) -> {
             var name1 = Enchantment.getName(
                 EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(e1.enchantment_id(), this.player.getWorld()), 1
@@ -191,8 +210,8 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
             if (nameComparison != 0) return nameComparison; // Sort by name alphabetically
             return Integer.compare(e1.enchantment_level(), e2.enchantment_level()); // Sort by level numerically
         }).forEach(enchantWithLevel -> {
-            var cost = this.handler.getEnchantmentItemCost(enchantWithLevel); 
-            var xpCost = this.handler.getEnchantmentXpLevelCost(enchantWithLevel); // Example XP cost, replace with actual logic
+            var cost = enchantFromBook ? ItemStack.EMPTY : this.handler.getEnchantmentItemCost(enchantWithLevel); 
+            var xpCost = enchantFromBook ? 0 : this.handler.getEnchantmentXpLevelCost(enchantWithLevel); // Example XP cost, replace with actual logic
             this.addEntry(new EnchantUiEntry(client, this.handler, enchantWithLevel, cost, xpCost));
         });
         resumeNavigation(navigationIndex);
@@ -232,8 +251,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
             this.cost = cost;
             this.xp_level_cost = xp_level_cost;
             this.enchantment = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchantWithLevel.enchantment_id(), this.player.getWorld());
-            this.overridenEnchant = enchantable_item
-                .getEnchantments()
+            this.overridenEnchant = EnchantmentHelper.getEnchantments(enchantable_item)
                 .getEnchantmentEntries()
                 .stream()
                 .filter(enchant_x_level->
@@ -267,7 +285,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
         }
 
         public boolean itemCostConditionMet() {
-            return ItemStack.areItemsAndComponentsEqual(cost, cost_item_stack) && cost_item_stack.getCount() >= cost.getCount();
+            return cost.isEmpty() || ItemStack.areItemsAndComponentsEqual(cost, cost_item_stack) && cost_item_stack.getCount() >= cost.getCount();
         }
 
         public boolean serverSendApplyEnchant() {
