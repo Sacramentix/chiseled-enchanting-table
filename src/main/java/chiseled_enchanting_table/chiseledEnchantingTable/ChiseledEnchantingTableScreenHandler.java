@@ -139,6 +139,37 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 			this.world.random.nextFloat() * 0.1F + 0.9F
 		);
 	}
+
+	public float getEnchantableXpCostMultiplier() {
+		// var enchantable_item = this.inventory.getStack(ENCHANTABLE_SLOT);
+		// if (enchantable_item.isEmpty()) return 0.0F;
+		// var material = 
+		// 	enchantable_item.getItem() instanceof net.minecraft.item.ToolItem toolItem   ? toolItem.getMaterial()  :
+		// 	enchantable_item.getItem() instanceof net.minecraft.item.ArmorItem armorItem ? armorItem.getMaterial() :
+		// 	null;
+		// if (enchantable_item.getItem() instanceof net.minecraft.item.ToolItem toolItem) {
+		// 	return switch (toolItem.getMaterial()) {
+		// 		case net.minecraft.item.ToolMaterials.WOOD -> 1.0F;
+		// 		case net.minecraft.item.ToolMaterials.STONE -> 2.0F;
+		// 		case net.minecraft.item.ToolMaterials.IRON -> 3.0F;
+		// 		case net.minecraft.item.ToolMaterials.DIAMOND -> 4.0F;
+		// 		case net.minecraft.item.ToolMaterials.GOLD -> 5.0F;
+		// 		case net.minecraft.item.ToolMaterials.NETHERITE -> 6.0F;
+		// 		default -> 0.0F;
+		// 	};
+		// } else if (enchantable_item.getItem() instanceof net.minecraft.item.ArmorItem armorItem) {
+		// 	return switch (armorItem.getMaterial()) {
+		// 		case net.minecraft.item.ArmorMaterials.LEATHER -> 1.0F;
+		// 		case net.minecraft.item.ArmorMaterials.CHAIN -> 2.0F;
+		// 		case net.minecraft.item.ArmorMaterials.IRON -> 3.0F;
+		// 		case net.minecraft.item.ArmorMaterials.DIAMOND -> 4.0F;
+		// 		case net.minecraft.item.ArmorMaterials.GOLD -> 5.0F;
+		// 		case net.minecraft.item.ArmorMaterials.NETHERITE -> 6.0F;
+		// 		default -> 0.0F;
+		// 	};
+		// }
+		return 0.0F;
+	}
 	
 	public int getEnchantmentXpLevelCost(ApplyEnchantmentPayload ewl) {
 		return getEnchantmentXpLevelCost(new EnchantmentWithLevel(ewl.enchantment_id, ewl.enchantment_level));
@@ -164,7 +195,7 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 
 	public ItemStack getEnchantmentItemCost(EnchantmentWithLevel ewl) {
 		var level = ewl.enchantment_level();
-		  if (ewl.is("aqua_affinity")) {
+		if (ewl.is("aqua_affinity")) {
 			return new ItemStack(Items.COD, 5);
 		} if (ewl.is("bane_of_arthropods")) {
 			return new ItemStack(Items.SPIDER_EYE, level*2);

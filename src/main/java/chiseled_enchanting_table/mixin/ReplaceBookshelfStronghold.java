@@ -18,6 +18,7 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 
@@ -59,9 +60,26 @@ public class ReplaceBookshelfStronghold {
             var facingDirection = pos.subtract(blockPos);
             var newBlockState = Blocks.CHISELED_BOOKSHELF.getDefaultState()
                 .with(
-                    Properties.HORIZONTAL_FACING, Direction.fromVector(facingDirection.getX(), 0, facingDirection.getZ()));       
+                    Properties.HORIZONTAL_FACING, Direction.fromVector(facingDirection.getX(), 0, facingDirection.getZ())
+                );
+            // Blocks.CHISELED_BOOKSHELF.   
+            // var nbtData = blockState.getNbt();
+            // if (nbtData != null) {
+            //     newBlockState = Block.getStateFromNbt(nbtData, newBlockState);
+            // }
             serverWorld.setBlockState(blockPos, newBlockState, Block.SKIP_DROPS);
-            ChiseledBookshelfLootTable.fillWithSeededRandomBook(serverWorld, blockPos);
+            var blockEntity = serverWorld.getBlockEntity(blockPos);
+            if (!(blockEntity instanceof ChiseledBookshelfBlockEntity cbsbe)) break;
+            var nbtWithSlots =  ChiseledBookshelfLootTable.fillWithSeededRandomBook(serverWorld, blockPos);
+            var nbt = nbtWithSlots.nbt();
+            try {
+                var readNbtMethod = ChiseledBookshelfBlockEntity.class.getDeclaredMethod("readNbt", nbt.getClass(), world.getRegistryManager().getClass());
+                readNbtMethod.setAccessible(true);
+                readNbtMethod.invoke(cbsbe, nbt, world.getRegistryManager());
+            } catch (ReflectiveOperationException e) {
+                // throw new RuntimeException("Failed to invoke readNbt method on ChiseledBookshelfBlockEntity", e);
+            }
+            cbsbe.markDirty();
             break;
         }
     }
