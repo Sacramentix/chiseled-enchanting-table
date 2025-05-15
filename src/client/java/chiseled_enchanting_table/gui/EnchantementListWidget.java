@@ -71,7 +71,14 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
-    public int saveNavigationIfSameItem(ItemStack enchantable_item) {
+    public int saveNavigationIfSameItem(ItemStack enchantable_item, ItemStack cost_item_stack) {
+        var previousIsBook = this.cost_item_stack.isOf(Items.ENCHANTED_BOOK) || this.cost_item_stack.isOf(Items.BOOK);
+        var nextIsBook     =      cost_item_stack.isOf(Items.ENCHANTED_BOOK) ||      cost_item_stack.isOf(Items.BOOK);
+        // we don't save navigation in case of a book in cost slot
+        // because we display the enchantment of the book
+        // to be added for free
+        if (previousIsBook) return -1;
+        if (nextIsBook) return -1;
         var focusedIndex = -1;
         if (ItemStack.areItemsEqual(enchantable_item, this.enchantable_item)) {
             var focused = this.getFocused();
@@ -176,10 +183,12 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
 
 
     public void updateEntry(ItemStack enchantable_item, ItemStack cost_item_stack) {
-        var navigationIndex = saveNavigationIfSameItem(enchantable_item);
+        var navigationIndex = saveNavigationIfSameItem(enchantable_item, cost_item_stack);
 
         this.clearEntries();
-
+        if (navigationIndex == -1) {
+            this.setScrollAmount(0);
+        }
         this.enchantable_item = enchantable_item;
         var enchantFromBook = cost_item_stack.isOf(Items.ENCHANTED_BOOK);
         var available_enchantements = 
