@@ -4,6 +4,8 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"DisableBookEnchanting",
+		"bundle_hold_more_enchanted_book.BundleHoldMoreEnchantedBookPart1",
+		"bundle_hold_more_enchanted_book.BundleHoldMoreEnchantedBookPart2",
 		"MarkBookshelfForPostProcessing",
 		"RemoveAnvilEnchantUpgrade",
 		"ReplaceBookshelfMansion",
