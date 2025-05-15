@@ -1,5 +1,7 @@
 package chiseled_enchanting_table.modifyChestLootTable.abandoned_mineshaft;
 
+import java.util.List;
+
 import com.mojang.serialization.MapCodec;
 import chiseled_enchanting_table.ChiseledEnchantingTable;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -20,6 +22,7 @@ import net.minecraft.loot.function.LootFunctionType;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.structure.MineshaftStructure;
 import net.minecraft.registry.Registries;
@@ -57,6 +60,11 @@ public class DepthBasedEfficiency implements LootFunction {
         var v2_5 = Math.max(2, Math.min(5, roundedValue)); // Clamp the value between 2 and 5
         
         stack.addEnchantment(efficiency, v2_5);
+        var lore = new LoreComponent(List.of(
+            Text.literal("Chiseled Enchanting Table")
+            .styled(style -> style.withColor(0x800080))
+        ));
+        stack.set(DataComponentTypes.LORE, lore);
         return stack;
     }
 
