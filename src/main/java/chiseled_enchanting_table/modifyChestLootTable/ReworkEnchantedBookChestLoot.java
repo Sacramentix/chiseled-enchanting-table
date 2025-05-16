@@ -3,7 +3,6 @@ package chiseled_enchanting_table.modifyChestLootTable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import chiseled_enchanting_table.modifyChestLootTable.abandoned_mineshaft.DepthBasedEfficiency;
 import chiseled_enchanting_table.modifyChestLootTable.abandoned_mineshaft.DepthBasedEfficiency.DepthBasedEfficiencyBuilder;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableSource;
@@ -16,7 +15,6 @@ import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.SetEnchantmentsLootFunction;
 import net.minecraft.loot.function.SetLoreLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
-import net.minecraft.loot.provider.number.LootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -52,7 +50,7 @@ public class ReworkEnchantedBookChestLoot {
                 .styled(style -> style.withColor(0x800080))
             );
 
-        var enchantmentRegistry = registries.getOptionalWrapper(RegistryKeys.ENCHANTMENT).get();
+        var enchantmentRegistry = registries.getOptional(RegistryKeys.ENCHANTMENT).get();
 
         Function<String, Reference<Enchantment>> enchantEntry = 
             (String s) -> enchantmentRegistry.getOptional(RegistryKey.of(RegistryKeys.ENCHANTMENT, Identifier.of(s))).get();

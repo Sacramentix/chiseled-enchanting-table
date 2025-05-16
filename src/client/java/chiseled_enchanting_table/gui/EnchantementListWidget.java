@@ -15,7 +15,6 @@ import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -120,8 +119,8 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
     // }
     
     @Override
-    protected int getRowTop(int index) {
-        return this.getY() + 4 - (int)this.getScrollAmount() + index * this.itemHeight + this.headerHeight;
+    public int getRowTop(int index) {
+        return this.getY() + 4 - (int)this.getScrollY() + index * this.itemHeight + this.headerHeight;
     }
 
     public final Identifier SCROLLER_TEXTURE = Identifier.ofVanilla("widget/scroller");
@@ -176,18 +175,13 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
         // RenderSystem.disableBlend();
     }
 
-    @Override
-    protected boolean isScrollbarVisible() {
-        return this.getMaxScroll() > 0;
-    }
-
 
     public void updateEntry(ItemStack enchantable_item, ItemStack cost_item_stack) {
         var navigationIndex = saveNavigationIfSameItem(enchantable_item, cost_item_stack);
 
         this.clearEntries();
         if (navigationIndex == -1) {
-            this.setScrollAmount(0);
+            this.setScrollY(0);
         }
         this.enchantable_item = enchantable_item;
         var enchantFromBook = cost_item_stack.isOf(Items.ENCHANTED_BOOK);

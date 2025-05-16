@@ -16,10 +16,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3d;
 
 @Environment(EnvType.CLIENT)
-public class ChiseledEnchantingTableBlockEntityRenderer
-		implements BlockEntityRenderer<ChiseledEnchantingTableBlockEntity> {
+public class ChiseledEnchantingTableBlockEntityRenderer implements BlockEntityRenderer<ChiseledEnchantingTableBlockEntity> {
 	public static final SpriteIdentifier BOOK_TEXTURE;
 	private final BookModel book;
 
@@ -27,9 +27,10 @@ public class ChiseledEnchantingTableBlockEntityRenderer
 		this.book = new BookModel(ctx.getLayerModelPart(EntityModelLayers.BOOK));
 	}
 
+	@Override
 	public void render(
 		ChiseledEnchantingTableBlockEntity enchantingTableBlockEntity, float f,
-		MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j
+		MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, int overlay, Vec3d cameraPos
 	) {
 		var floatingBook = enchantingTableBlockEntity.floatingBook;
 		matrixStack.push();
@@ -54,12 +55,14 @@ public class ChiseledEnchantingTableBlockEntityRenderer
 		float o = MathHelper.lerp(f, floatingBook.pageTurningSpeed, floatingBook.nextPageTurningSpeed);
 		this.book.setPageAngles(g, MathHelper.clamp(m, 0.0F, 1.0F), MathHelper.clamp(n, 0.0F, 1.0F), o);
 		VertexConsumer vertexConsumer = BOOK_TEXTURE.getVertexConsumer(vertexConsumerProvider, RenderLayer::getEntitySolid);
-		this.book.renderBook(matrixStack, vertexConsumer, i, j, -1);
+		this.book.render(matrixStack, vertexConsumer, light, overlay, -1);
 		matrixStack.pop();
 	}
 
 	static {
+		
 		BOOK_TEXTURE = new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE,
 				Identifier.ofVanilla("entity/enchanting_table_book"));
 	}
+
 }

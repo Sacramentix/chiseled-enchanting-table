@@ -13,7 +13,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructureTemplate;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 
@@ -58,7 +57,7 @@ public class ChiseledBookshelfLootTable {
             var random = randomGenerator.nextInt(1000);
             @SuppressWarnings("unchecked")
             var enchantments = (Stream<RegistryEntry<Enchantment>>)(Object) world.getRegistryManager()
-                .get(RegistryKeys.ENCHANTMENT)
+                .getOptional(RegistryKeys.ENCHANTMENT).get()
                 .streamEntries();
             if (random < 20) {
                 var enchanted_book = EnchantmentHelper.enchant(
@@ -67,14 +66,14 @@ public class ChiseledBookshelfLootTable {
                     50,
                     enchantments
                 );
-                var nbtBook = (NbtCompound) enchanted_book.encode(world.getRegistryManager());
+                var nbtBook = (NbtCompound) enchanted_book.toNbt(world.getRegistryManager());
                 nbtBook.putByte("Slot", (byte) j);
                 nbtItems.add(nbtBook);
                 occupiedSlots.add(i);
                 
             } else if (random < 70) {
                 var book = new ItemStack(Items.BOOK);
-                var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                var nbtBook = (NbtCompound) book.toNbt(world.getRegistryManager());
                 nbtBook.putByte("Slot", (byte) j);
                 nbtItems.add(nbtBook);
                 

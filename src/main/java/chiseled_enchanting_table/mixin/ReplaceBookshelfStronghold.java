@@ -24,8 +24,6 @@ import net.minecraft.state.property.Properties;
 
 @Mixin(WorldChunk.class)
 public class ReplaceBookshelfStronghold {
-    @Shadow
-    private World world;
 
     // runPostProcessing
 
@@ -34,7 +32,7 @@ public class ReplaceBookshelfStronghold {
     // this.world.setBlockState(blockPos, blockState2, Block.NO_REDRAW | Block.FORCE_STATE);
     
     @Inject(
-        method = "runPostProcessing()V",
+        method = "runPostProcessing(Lnet/minecraft/server/world/ServerWorld;)V",
         at = @At(    
             value = "INVOKE",
             target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z",
@@ -44,11 +42,12 @@ public class ReplaceBookshelfStronghold {
     )
     private void injectBookshelfProcessor(
         CallbackInfo ci,
+        @Local(ordinal = 0) LocalRef<ServerWorld> localRefServerWorld,
         @Local(ordinal = 0) LocalRef<BlockPos> localRefBlockPos,
         @Local(ordinal = 0) LocalRef<BlockState> localRefBlockState
     ) {
-
-        if (!(this.world instanceof ServerWorld serverWorld)) return;
+        var serverWorld = localRefServerWorld.get();
+        // if (!(this.world instanceof ServerWorld serverWorld)) return;
         var blockPos    = localRefBlockPos.get();
         var blockState  = localRefBlockState.get();
         if (!(blockState.isOf(Blocks.CHISELED_BOOKSHELF) || blockState.isOf(Blocks.BOOKSHELF))) return;
@@ -60,7 +59,7 @@ public class ReplaceBookshelfStronghold {
             var facingDirection = pos.subtract(blockPos);
             var newBlockState = Blocks.CHISELED_BOOKSHELF.getDefaultState()
                 .with(
-                    Properties.HORIZONTAL_FACING, Direction.fromVector(facingDirection.getX(), 0, facingDirection.getZ())
+                    Properties.HORIZONTAL_FACING, Direction.fromVector(facingDirection.getX(), 0, facingDirection.getZ(), Direction.NORTH)
                 );
             // Blocks.CHISELED_BOOKSHELF.   
             // var nbtData = blockState.getNbt();
@@ -73,9 +72,9 @@ public class ReplaceBookshelfStronghold {
             var nbtWithSlots =  ChiseledBookshelfLootTable.fillWithSeededRandomBook(serverWorld, blockPos);
             var nbt = nbtWithSlots.nbt();
             try {
-                var readNbtMethod = ChiseledBookshelfBlockEntity.class.getDeclaredMethod("readNbt", nbt.getClass(), world.getRegistryManager().getClass());
+                var readNbtMethod = ChiseledBookshelfBlockEntity.class.getDeclaredMethod("readNbt", nbt.getClass(), serverWorld.getRegistryManager().getClass());
                 readNbtMethod.setAccessible(true);
-                readNbtMethod.invoke(cbsbe, nbt, world.getRegistryManager());
+                readNbtMethod.invoke(cbsbe, nbt, serverWorld.getRegistryManager());
             } catch (ReflectiveOperationException e) {
                 // throw new RuntimeException("Failed to invoke readNbt method on ChiseledBookshelfBlockEntity", e);
             }

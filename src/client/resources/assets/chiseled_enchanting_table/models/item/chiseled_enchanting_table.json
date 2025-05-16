@@ -8,6 +8,13 @@
         "top_overlay": "chiseled_enchanting_table:block/enchanting_table_top_overlay",
         "side_overlay": "chiseled_enchanting_table:block/enchanting_table_side_overlay"
     },
+
+    "tints": [
+        {
+          "type": "minecraft:dye",
+          "default": 10494192
+        }
+    ],
     "elements": [{
         "from": [ 0, 0, 0 ],
         "to": [ 16, 12, 16 ],

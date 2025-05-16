@@ -7,6 +7,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -93,19 +94,11 @@ public class ChiseledEnchantingTableScreen extends HandledScreen<ChiseledEnchant
 	}
 
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(DrawContext ctx, float delta, int mouseX, int mouseY) {
         int i = this.x;
 		int j = this.y;
-        
-		context.drawTexture(BACKGROUND, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 
-		// // boolean showInactiveSlots = RPGEnchantingClient.showInactiveInventorySlots();
-		// for (k = 0; k < this.inventory_size; ++k) {
-		// 	m = (k / 9);
-		// 	context.drawTexture(SLOT_TEXTURE, x + 61 + (k - (m * 9)) * 18, y + 150 + (m * 18), 0, 0, 18, 18, 18, 18);
-		// }
-		// for (k = 0; k < this.hotbar_size; ++k) {
-		// 	context.drawTexture(SLOT_TEXTURE, x + 61 + k * 18, y + 208, 0, 0, 18, 18, 18, 18);
-		// }
+		ctx.drawGuiTexture((id)->RenderLayer.getGui(),BACKGROUND, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+
     }
 }
