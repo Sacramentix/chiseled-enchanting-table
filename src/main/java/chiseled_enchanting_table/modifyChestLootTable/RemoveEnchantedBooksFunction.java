@@ -2,9 +2,7 @@ package chiseled_enchanting_table.modifyChestLootTable;
 
 import com.mojang.serialization.MapCodec;
 import chiseled_enchanting_table.ChiseledEnchantingTable;
-import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.context.LootContext;
