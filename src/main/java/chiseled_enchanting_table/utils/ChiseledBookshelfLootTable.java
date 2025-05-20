@@ -1,11 +1,15 @@
 package chiseled_enchanting_table.utils;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Stream;
-import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -13,82 +17,231 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructureTemplate;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
 
 public class ChiseledBookshelfLootTable {
     
-    public static NbtCompoundWithOccupiedSlots fillWithSeededRandomBook(ServerWorld world, BlockPos blockPos) {
+    public static NbtCompoundWithBlockState fillWithSeededRandomBook(ServerWorld world, BlockPos blockPos) {
         var seed = world.getSeed() + blockPos.getX() * 31L + blockPos.getY() * 37L + blockPos.getZ() * 41L;
-        var randomGenerator = Random.create(seed);
+        var randomGenerator = new java.util.Random(seed);
+
+        var enchantmentRegistry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
+
+        var enchantmentsByMaxLevel = new HashMap<Integer, List<RegistryEntry<Enchantment>>>();
+
+        var enchantmentsByItems = new HashMap<RegistryEntry<Item>, List<RegistryEntry<Enchantment>>>();
+
+        for (int level = 1; level <= 5; level++) {
+            enchantmentsByMaxLevel.put(level, new ArrayList<>());
+        }
         
-        // The set nbt method don't seems to work at the moment
+        enchantmentRegistry.streamEntries().forEach(enchantEntry -> {
+            var enchant = enchantEntry.value();
+            var maxLevel = enchant.getMaxLevel();
+            
+            for (var item : enchant.getApplicableItems()) {
+                enchantmentsByItems.putIfAbsent(item, new ArrayList<>());
+                enchantmentsByItems.get(item).add(enchantEntry);
+            }
+            for (var level = 1; level <= 5; level++) {
+                if (maxLevel >= level) {
+                    enchantmentsByMaxLevel.get(level).add(enchantEntry);
+                }
+            }
+        });
 
-        // var nbt = new NbtCompound();
-        // for (int i = 0; i < ChiseledBookshelfBlockEntity.MAX_BOOKS; i++) {
-        //     final int j = i;
-        //     var random = randomGenerator.nextInt(1000);
-        //     @SuppressWarnings("unchecked")
-        //     var enchantments = (Stream<RegistryEntry<Enchantment>>)(Object) world.getRegistryManager()
-        //     .get(RegistryKeys.ENCHANTMENT)
-        //     .streamEntries();
-        //     if (random < 20) {
-        //     var enchanted_book = EnchantmentHelper.enchant(
-        //         randomGenerator,
-        //         new ItemStack(Items.BOOK),
-        //         50,
-        //         enchantments
-        //     );
-        //     nbt.put("Slot" + j, enchanted_book.encode(world.getRegistryManager()));
-        //     } else if (random < 70) {
-        //     var book = new ItemStack(Items.BOOK);
-        //     nbt.put("Slot" + j, book.encode(world.getRegistryManager()));
-        //     }
-        // }
-        // return nbt;
+        Function<Integer, ItemStack> randomEnchantFromLevel = 
+            (Integer level) -> {
+                var book = new ItemStack(Items.ENCHANTED_BOOK);
+                var enchantments = enchantmentsByMaxLevel.get(level);
+                var randomEnchant = enchantments.stream()
+                    .skip(randomGenerator.nextInt(enchantments.size()))
+                    .findFirst()
+                    .orElseThrow();
+                book.addEnchantment(randomEnchant, level);
+                return book;
+            };
 
-        // Might be a bot slow because it force to add block using main thread :()
+        Function<RegistryEntry<Item>, ItemStack> enchantSetForItemPool = 
+            (RegistryEntry<Item> item) -> {
+                var book = new ItemStack(Items.ENCHANTED_BOOK);
+                var r1 = randomGenerator.nextInt(1000);
+                var numberOfEnchant =
+                    r1 > 800 ? 4 :
+                    r1 > 500 ? 3 :
+                               2 ;
+                var enchants = enchantmentsByItems.get(item);
+                Collections.shuffle(enchants, randomGenerator);
+                
+                // var enchantToApply = .collect(Collectors.toList());
+
+                enchants.stream().limit(numberOfEnchant).forEach(enchant->{
+                    var r2 = randomGenerator.nextInt(1000);
+                    var level =
+                        r2 > 850 ? 5 :
+                        r2 > 650 ? 4 :
+                        r2 > 350 ? 3 :
+                                   2 ;
+                    var cap = enchant.value().getMaxLevel();
+                    var cappedLevel =  cap < level ? cap : level;
+                    book.addEnchantment(enchant, cappedLevel);
+                });
+                return book;
+            };
+        Supplier<ItemStack> enchantSetForRandomItemPool = 
+            () -> {
+                var randomItem = enchantmentsByItems.keySet()
+                    .stream()
+                    .skip(randomGenerator.nextInt(enchantmentsByItems.size()))
+                    .findFirst()
+                    .orElseThrow();
+                return enchantSetForItemPool.apply(randomItem);
+            };
+        
+        var r = randomGenerator.nextInt(1000);
+        var fillingType = 
+            r > 800 ? 0 :
+            r > 200 ? 1 :
+                      2 ;
+        
+        
+
         var nbt = new NbtCompound();
         var nbtItems = new NbtList();
-        var occupiedSlots = new HashSet<Integer>();
+        var blockState = Blocks.CHISELED_BOOKSHELF.getDefaultState();
+        BooleanProperty[] slots = {
+            Properties.SLOT_0_OCCUPIED,
+            Properties.SLOT_1_OCCUPIED,
+            Properties.SLOT_2_OCCUPIED,
+            Properties.SLOT_3_OCCUPIED,
+            Properties.SLOT_4_OCCUPIED,
+            Properties.SLOT_5_OCCUPIED,
+        };
         
-        for (int i = 0; i < ChiseledBookshelfBlockEntity.MAX_BOOKS; i++) {
-            final int j = i;
-            var random = randomGenerator.nextInt(1000);
-            @SuppressWarnings("unchecked")
-            var enchantments = (Stream<RegistryEntry<Enchantment>>)(Object) world.getRegistryManager()
-                .get(RegistryKeys.ENCHANTMENT)
-                .streamEntries();
-            if (random < 20) {
-                var enchanted_book = EnchantmentHelper.enchant(
-                    randomGenerator,
-                    new ItemStack(Items.BOOK),
-                    50,
-                    enchantments
-                );
-                var nbtBook = (NbtCompound) enchanted_book.encode(world.getRegistryManager());
-                nbtBook.putByte("Slot", (byte) j);
-                nbtItems.add(nbtBook);
-                occupiedSlots.add(i);
-                
-            } else if (random < 70) {
-                var book = new ItemStack(Items.BOOK);
-                var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
-                nbtBook.putByte("Slot", (byte) j);
-                nbtItems.add(nbtBook);
-                
+        if (fillingType == 0) {
+            var i = 0;
+            for (var slot : slots) {
+                blockState = blockState.with(slot, true);
+
+                var r2 = randomGenerator.nextInt(10_000_000);
+
+                // Enchant Set
+                if (r2 < 50_000) {
+                    var book = enchantSetForRandomItemPool.get();
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 5
+                } else if (r2 < 90_000) {
+                    var book = randomEnchantFromLevel.apply(5);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 4
+                } else if (r2 < 150_000) {
+                    var book = randomEnchantFromLevel.apply(4);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 3
+                } else if (r2 < 300_000) {
+                    var book = randomEnchantFromLevel.apply(3);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 2
+                } else if (r2 < 400_000) {
+                    var book = randomEnchantFromLevel.apply(2);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 1
+                } else if (r2 < 450_000) {
+                    var book = randomEnchantFromLevel.apply(1);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                } else {
+                    var book = new ItemStack(Items.BOOK);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                }
+                i++;
             }
-            
+        } else if (fillingType == 1) {
+            var i = 0;
+            for (var slot : slots) {
+
+                var r2 = randomGenerator.nextInt(20_000_000);
+                if (r2 > 10_000_000) {
+                    blockState = blockState.with(slot, false);
+                    i++;
+                    continue;
+                } else {
+                    blockState = blockState.with(slot, true);
+                }
+
+                // Enchant Set
+                if (r2 < 50_000) {
+                    var book = enchantSetForRandomItemPool.get();
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 5
+                } else if (r2 < 90_000) {
+                    var book = randomEnchantFromLevel.apply(5);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 4
+                } else if (r2 < 150_000) {
+                    var book = randomEnchantFromLevel.apply(4);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 3
+                } else if (r2 < 300_000) {
+                    var book = randomEnchantFromLevel.apply(3);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 2
+                } else if (r2 < 400_000) {
+                    var book = randomEnchantFromLevel.apply(2);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                // Enchant level 1
+                } else if (r2 < 450_000) {
+                    var book = randomEnchantFromLevel.apply(1);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                } else {
+                    var book = new ItemStack(Items.BOOK);
+                    var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
+                    nbtBook.putByte("Slot", (byte) i);
+                    nbtItems.add(nbtBook);
+                }
+                i++;
+            }
+        } else if (fillingType == 2) {
+            for (var slot : slots) {
+                blockState = blockState.with(slot, false);
+            }
         }
+
         nbt.put("Items", nbtItems);
-        return new NbtCompoundWithOccupiedSlots(nbt, occupiedSlots);
+        return new NbtCompoundWithBlockState(nbt, blockState);
     }
 
-    public record NbtCompoundWithOccupiedSlots(NbtCompound nbt, Set<Integer> slots) {
-        public NbtCompoundWithOccupiedSlots(NbtCompound nbt, Set<Integer> slots) {
+    public record NbtCompoundWithBlockState(NbtCompound nbt, BlockState state) {
+        public NbtCompoundWithBlockState(NbtCompound nbt, BlockState state) {
             this.nbt = nbt;
-            this.slots = Set.copyOf(slots); // Ensure immutability
+            this.state = state; // Ensure immutability
         }
     }
 }
