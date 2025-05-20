@@ -1,4 +1,4 @@
-package chiseled_enchanting_table.mixin.bundle_hold_more_enchanted_book;
+package chiseled_enchanting_table.mixin.bundle.change_weight_enchanted_book;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
 @Mixin(BundleContentsComponent.class)
-public class BundleHoldMoreEnchantedBookPart1 {
+public class Part1 {
 
     @Shadow
     private static native Fraction getOccupancy(ItemStack stack);

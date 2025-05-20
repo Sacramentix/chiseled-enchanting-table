@@ -3,14 +3,20 @@
 	"package": "chiseled_enchanting_table.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"DisableBookEnchanting",
-		"bundle_hold_more_enchanted_book.BundleHoldMoreEnchantedBookPart1",
-		"bundle_hold_more_enchanted_book.BundleHoldMoreEnchantedBookPart2",
-		"MarkBookshelfForPostProcessing",
-		"RemoveAnvilEnchantUpgrade",
-		"ReplaceBookshelfMansion",
-		"ReplaceBookshelfStronghold",
-		"ReplaceBookshelfStructure"
+		"anvil.RemoveEnchantUpgrade",
+
+		"bundle.change_weight_enchanted_book.Part1",
+		"bundle.change_weight_enchanted_book.Part2",
+
+		"chiseled_bookshelf.AddRandomTick",
+
+		"enchanting_table.DisableBookEnchanting",
+
+		"structureProcessor.bookshelfReplacer.InjectIn_StructurePlacementData",
+		"structureProcessor.bookshelfReplacer.InjectIn_StructurePool_Projection",
+		"structureProcessor.bookshelfReplacer.InjectIn_WorldChunk",
+		"structureProcessor.bookshelfReplacer.MarkBookshelfForPostProcessing"
+
 	],
 	"injectors": {
 		"defaultRequire": 1

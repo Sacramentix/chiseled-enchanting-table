@@ -1,4 +1,4 @@
-package chiseled_enchanting_table.mixin;
+package chiseled_enchanting_table.mixin.anvil;
 
 import net.minecraft.screen.AnvilScreenHandler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Slice;
 // This mixins disable the mechanic of upgrading an echant level using 2 similar enchant of samelevel
 
 @Mixin(AnvilScreenHandler.class)
-public class RemoveAnvilEnchantUpgrade {
+public class RemoveEnchantUpgrade {
 
     // void updateResult()                                  <-- method = "updateResult()V",
 

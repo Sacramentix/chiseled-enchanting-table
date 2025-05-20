@@ -1,24 +1,21 @@
-package chiseled_enchanting_table.mixin.bundle_hold_more_enchanted_book;
+package chiseled_enchanting_table.mixin.bundle.change_weight_enchanted_book;
 
 import java.util.List;
 
 import org.apache.commons.lang3.math.Fraction;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
-import net.minecraft.item.BundleItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
 
 @Mixin(targets = "net.minecraft.component.type.BundleContentsComponent$Builder")
-public class BundleHoldMoreEnchantedBookPart2 {
+public class Part2 {
     // @Shadow
     // private static final Fraction NESTED_BUNDLE_OCCUPANCY;
 

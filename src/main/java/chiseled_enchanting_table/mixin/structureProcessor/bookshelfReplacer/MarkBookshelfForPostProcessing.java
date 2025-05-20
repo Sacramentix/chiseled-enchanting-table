@@ -1,4 +1,4 @@
-package chiseled_enchanting_table.mixin;
+package chiseled_enchanting_table.mixin.structureProcessor.bookshelfReplacer;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -16,13 +16,13 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 @Mixin(StructurePiece.class)
 public class MarkBookshelfForPostProcessing {
     // net.minecraft.world.StructureWorldAccess net.minecraft.block.BlockState int int int net.minecraft.util.math.BlockBox
-    @Inject(method = "addBlock(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/block/BlockState;IIILnet/minecraft/util/math/BlockBox;)V", at = @At("HEAD"))
-    private void replaceBookShelf(CallbackInfo  ci, @Local(ordinal = 0) LocalRef<BlockState> localRef) {
-        var block = localRef.get();
-        if (block.isOf(Blocks.BOOKSHELF)) {
-            localRef.set(Blocks.CHISELED_BOOKSHELF.getDefaultState());
-        }
-    }
+    // @Inject(method = "addBlock(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/block/BlockState;IIILnet/minecraft/util/math/BlockBox;)V", at = @At("HEAD"))
+    // private void replaceBookShelf(CallbackInfo  ci, @Local(ordinal = 0) LocalRef<BlockState> localRef) {
+    //     var block = localRef.get();
+    //     if (block.isOf(Blocks.BOOKSHELF)) {
+    //         localRef.set(Blocks.CHISELED_BOOKSHELF.getDefaultState());
+    //     }
+    // }
     // boolean net.minecraft.world.ModifiableWorld.setBlockState(BlockPos pos, BlockState state, int flags)
     // boolean net.minecraft.structure.StructurePiece.canAddBlock(WorldView world, int x, int y, int z, BlockBox box)
     @Inject(
