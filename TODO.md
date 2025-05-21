@@ -36,10 +36,12 @@ that can contain book and enchanted book
 - handle Chiseled enchanting table ui scrollbar click
 
 - add advancement :
-    - Advancement for crating the table
-    - Advancement for unlock enchant by placing them in nearby chiseled bookshelf
-    - Advancement for having the table with all enchant unlock at once
-    - Advancement for adding all enchant to a book using the table
+    - ✅ Advancement for crating the table
+    - ✅ Advancement for unlock enchant by placing them in nearby chiseled bookshelf
+    - ✅ Advancement for having the table with all enchant unlock at once
+    - ✅ Advancement for adding all enchant to a book using the table
 
+
+handle case book swap enchant level
 
 - Chiseled enchanting table should work with lectern ?
