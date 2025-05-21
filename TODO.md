@@ -42,6 +42,8 @@ that can contain book and enchanted book
     - ✅ Advancement for adding all enchant to a book using the table
 
 
+setup translation
+
 handle case book swap enchant level
 
 - Chiseled enchanting table should work with lectern ?
