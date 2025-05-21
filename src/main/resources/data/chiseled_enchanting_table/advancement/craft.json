@@ -1,0 +1,30 @@
+{
+    "display": {
+      "icon": {
+        "id": "chiseled_enchanting_table:chiseled_enchanting_table"
+      },
+      "title": "Chiseled enchanting!",
+      "description": "Craft your first chiseled enchanting table.",
+      "background": "minecraft:block/crying_obsidian"
+    },
+    "show_toast": false,
+    "announce_to_chat": false,
+    "parent": "minecraft:story/mine_diamond",
+    "criteria": {
+      "craft": {
+        "trigger": "minecraft:recipe_crafted",
+        "conditions": {
+          "recipe_id": "chiseled_enchanting_table:chiseled_enchanting_table",
+          "ingredients": [
+            {}
+          ]
+        }
+      }
+    },
+    "requirements": [
+        [
+            "craft"
+        ]
+    ],
+    "sends_telemetry_event": false
+}

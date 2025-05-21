@@ -1,6 +1,7 @@
 package chiseled_enchanting_table.chiseledEnchantingTable;
 
 import chiseled_enchanting_table.ChiseledEnchantingTable;
+import chiseled_enchanting_table.utils.Advancement;
 import chiseled_enchanting_table.utils.EnchantmentWithLevel;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import chiseled_enchanting_table.registry.ScreenHandlerRegistry;
@@ -147,7 +148,9 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 		
 		// Remove conflicting enchantments and adjust levels if necessary
 		var existingEnchantments = new HashSet<>(EnchantmentHelper.getEnchantments(enchantable_item).getEnchantmentEntries());
-		existingEnchantments.removeIf(existingEnchantment -> !Enchantment.canBeCombined(existingEnchantment.getKey(), enchantment_entry));
+		if (!(enchantable_item.isOf(Items.BOOK) || enchantable_item.isOf(Items.ENCHANTED_BOOK))) {
+			existingEnchantments.removeIf(existingEnchantment -> !Enchantment.canBeCombined(existingEnchantment.getKey(), enchantment_entry));
+		}
 		existingEnchantments.add(
 			Object2IntMaps.singleton(enchantment_entry, enchantment_level).object2IntEntrySet().iterator().next()
 		);
@@ -170,6 +173,11 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 			2.0F, 
 			this.world.random.nextFloat() * 0.1F + 0.9F
 		);
+		Advancement.give(player, "enchant_from_book");
+		Advancement.checkAllEnchantBook(this.player, this.world, enchantable_item);
+		if (enchantable_item.isOf(Items.BOOK) || enchantable_item.isOf(Items.ENCHANTED_BOOK)) {
+			Advancement.give(player, "transfer_enchanted_book");
+		}
 	}
 
 	public void applyEnchantement(ApplyEnchantmentPayload payload) {
@@ -216,6 +224,10 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 			2.0F, 
 			this.world.random.nextFloat() * 0.1F + 0.9F
 		);
+		Advancement.checkAllEnchantBook(this.player, this.world, enchantable_item);
+		if (enchantable_item.isOf(Items.ENCHANTED_BOOK) || enchantable_item.isOf(Items.BOOK)) {
+			Advancement.give(player, "enchant_to_book");
+		}
 	}
 
 	public float getEnchantableXpCostMultiplier() {

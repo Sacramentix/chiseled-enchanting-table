@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:book"
+    },
+    "title": "Chiseled enchanted book!",
+    "description": "Add enchantments to a book with a chiseled enchanting table.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "chiseled_enchanting_table:root",
+  "criteria": {
+    "enchant_to_book": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "enchant_to_book"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

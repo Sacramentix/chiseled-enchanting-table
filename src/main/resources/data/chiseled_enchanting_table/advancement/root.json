@@ -1,0 +1,27 @@
+{
+    "display": {
+      "icon": {
+        "id": "chiseled_enchanting_table:chiseled_enchanting_table"
+      },
+      "title": "Chiseled journey begin!",
+      "description": "Craft your first chiseled enchanting table.",
+      "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+    },
+    "criteria": {
+      "craft": {
+        "trigger": "minecraft:recipe_crafted",
+        "conditions": {
+          "recipe_id": "chiseled_enchanting_table:chiseled_enchanting_table",
+          "ingredients": [
+            {}
+          ]
+        }
+      }
+    },
+    "requirements": [
+        [
+            "craft"
+        ]
+    ],
+    "sends_telemetry_event": false
+}

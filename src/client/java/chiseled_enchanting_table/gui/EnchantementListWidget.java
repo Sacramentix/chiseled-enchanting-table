@@ -15,7 +15,6 @@ import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -193,15 +192,15 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
         var enchantFromBook = cost_item_stack.isOf(Items.ENCHANTED_BOOK);
         var available_enchantements = 
             enchantFromBook ? EnchantmentHelper.getEnchantments(cost_item_stack)
-                                                                            .getEnchantmentEntries()
-                                                                            .stream()
-                                                                            .map(x->{
-                                                                                return new EnchantmentWithLevel(
-                                                                                    EnchantmentWithLevel.EnchantmentToIdentifier(x.getKey().value(), this.player.getWorld()),
-                                                                                    x.getIntValue()
-                                                                                );
-                                                                            })
-                                                                            .collect(Collectors.toSet()) :
+                                .getEnchantmentEntries()
+                                .stream()
+                                .map(x->{
+                                    return new EnchantmentWithLevel(
+                                        EnchantmentWithLevel.EnchantmentToIdentifier(x.getKey().value(), this.player.getWorld()),
+                                        x.getIntValue()
+                                    );
+                                })
+                                .collect(Collectors.toSet()) :
             cost_item_stack.isOf(Items.BOOK) ? new HashSet<EnchantmentWithLevel>() :
             unlocked_enchantements;
 
@@ -389,7 +388,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
                 var overridenEnchantmentName =  Enchantment.getName(enchant_entry, enchant.enchantment_level()).getString();
                 renderText(ctx, "⬇ "+overridenEnchantmentName, overridenEnchantmentX, overridenEnchantmentY, (Float)2.0f/3.0f, lightRedColor);
 
-            } else if (firstOverridenEnchant.isPresent()) {
+            } else if (firstOverridenEnchant.isPresent() && !enchantable_item.isOf(Items.ENCHANTED_BOOK)) {
 
                 var enchant = firstOverridenEnchant.get();
                 var enchant_entry = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchant.enchantment_id(), this.player.getWorld());

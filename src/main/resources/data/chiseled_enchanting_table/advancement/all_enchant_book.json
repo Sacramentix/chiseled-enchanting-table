@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:ender_eye"
+    },
+    "title": "Why did we get here?",
+    "description": "Create a enchanted book with all enchantments at a chiseled enchanting table.",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "chiseled_enchanting_table:enchant_to_book",
+  "criteria": {
+    "all_enchant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "all_enchant"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:enchanted_book"
+    },
+    "title": "Free enchantments!",
+    "description": "Comsume an enchantment from an enchanted book directly with a chiseled enchanting table.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "chiseled_enchanting_table:root",
+  "criteria": {
+    "enchant_from_book": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "enchant_from_book"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

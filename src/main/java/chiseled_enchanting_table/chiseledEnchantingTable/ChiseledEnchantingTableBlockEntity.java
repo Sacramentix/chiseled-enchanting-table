@@ -88,7 +88,7 @@ public class ChiseledEnchantingTableBlockEntity extends BlockEntity implements N
 		var componentMapBuilder = ComponentMap.builder();
 		super.addComponents(componentMapBuilder);
 		componentMapBuilder.add(DataComponentTypes.CUSTOM_NAME, this.customName);
-		componentMapBuilder.add(DataComponentTypes.DYED_COLOR, new DyedColorComponent(this.color, true));
+		if (this.color != -1) componentMapBuilder.add(DataComponentTypes.DYED_COLOR, new DyedColorComponent(this.color, true));
 		return componentMapBuilder.build();
 	}
 

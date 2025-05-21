@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "id": "chiseled_enchanting_table:chiseled_enchanting_table",
+      "components": {
+        "minecraft:dyed_color": {
+          "rgb": 8373791
+        }
+      }
+    },
+    "title": "I hate purple. What if I...",
+    "description": "Use a dye in hand to color a chiseled enchanting table.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "chiseled_enchanting_table:root",
+  "criteria": {
+    "color": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "color"
+    ]
+  ],
+  "sends_telemetry_event": false
+}

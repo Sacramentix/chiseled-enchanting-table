@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import chiseled_enchanting_table.chiseledEnchantingTable.ChiseledEnchantingTableScreenHandler.AvailableEnchantmentPayload;
 import chiseled_enchanting_table.registry.EntityRegistry;
 import chiseled_enchanting_table.utils.EnchantmentFinder;
+import chiseled_enchanting_table.utils.Advancement;
 import chiseled_enchanting_table.utils.BlockPosStream;
 import chiseled_enchanting_table.utils.EnchantmentWithLevel;
 
@@ -164,6 +165,7 @@ public class ChiseledEnchantingTableBlock extends BlockWithEntity {
 				stack.decrementUnlessCreative(1, player);
 				block.markDirty();
 				world.updateListeners(pos, state, state, 0);
+				Advancement.give(player, "color_table");
 				return ItemActionResult.SUCCESS;
 			}
 		}
@@ -202,6 +204,9 @@ public class ChiseledEnchantingTableBlock extends BlockWithEntity {
 		return new ExtendedScreenHandlerFactory<>() {
 			@Override
 			public AvailableEnchantmentPayload getScreenOpeningData(ServerPlayerEntity player) {
+				if (unlocked_enchantements.size() > 0) {
+					Advancement.give(player, "unlock_new_enchant");
+				}
 				return new AvailableEnchantmentPayload(available_enchantments);
 			}
 

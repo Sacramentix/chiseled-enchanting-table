@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:ender_pearl"
+    },
+    "title": "Transfer enchantments",
+    "description": "Transfer enchantments from one enchanted book to another with a chiseled enchanting table.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "chiseled_enchanting_table:enchant_from_book",
+  "criteria": {
+    "transfer": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "transfer"
+    ]
+  ],
+  "sends_telemetry_event": false
+}
