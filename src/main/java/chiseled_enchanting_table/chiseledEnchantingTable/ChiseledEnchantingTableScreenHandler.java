@@ -468,7 +468,6 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 
 	@Override
 	public void onContentChanged(Inventory inventory) {
-		System.out.println("CHANGED !");
 		if (this.onContentChangedCallback != null) {
 			this.onContentChangedCallback.run();
 		}
