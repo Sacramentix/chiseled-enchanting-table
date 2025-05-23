@@ -9,8 +9,8 @@ env:
   RELEASE_NAME:  Chiseled enchanting table Beta 0.1.0 for Minecraft 1.21.1
   MODRINTH_ID: ${{ secrets.PUBLISH_MODRINTH_ID }}
   MODRINTH_TOKEN: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
-  CURSEFORGE_ID: ${{ secrets.PUBLISH_CURSEFORGE_ID }}
-  CURSEFORGE_TOKEN: ${{ secrets.PUBLISH_CURSEFORGE_TOKEN }}
+  # CURSEFORGE_ID: ${{ secrets.PUBLISH_CURSEFORGE_ID }}
+  # CURSEFORGE_TOKEN: ${{ secrets.PUBLISH_CURSEFORGE_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}           
 
 permissions:
@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-java@v3.14.1
         with:
           distribution: "temurin"
-          java-version: ${{env.JAVA_VERSION}}"
+          java-version: ${{env.JAVA_VERSION}}
 
       - name: Make Gradle Wrapper Executable
         if: ${{ runner.os != 'Windows' }}
@@ -44,8 +44,8 @@ jobs:
       - name: Publish (CurseForge/Modrinth/GitHub)
         uses: Kira-NT/mc-publish@v3.3.0
         with:
-          curseforge-id: "${{env.CURSEFORGE_ID}}"
-          curseforge-token: "${{env.CURSEFORGE_TOKEN}}"
+          # curseforge-id: "${{env.CURSEFORGE_ID}}"
+          # curseforge-token: "${{env.CURSEFORGE_TOKEN}}"
           
           modrinth-id: "${{env.MODRINTH_ID}}"
           modrinth-token: "${{env.MODRINTH_TOKEN}}"
