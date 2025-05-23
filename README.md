@@ -1,12 +1,14 @@
 # Chiseled Enchanting Table
 
+![Chiseled enchanting table banner](./banner.png)
+
 A Minecraft Fabric mod that enhances the enchanting experience.
 
 ## Concept
 
 * Add a new chiseled enchanting table
 * Unlock new enchantment for chiseled enchanting table by placing enchanted book in nearby chiseled bookshelves
-*  Explore your world to discover new enchanted books!
+* Explore your world to discover new enchanted books!
 
 ## Installation
 
