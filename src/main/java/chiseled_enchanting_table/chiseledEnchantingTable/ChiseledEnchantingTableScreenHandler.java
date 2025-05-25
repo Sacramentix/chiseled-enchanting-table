@@ -431,6 +431,13 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 				inventorySlotStartY - slotSize - slotPadding*2 - cost_slot_gap	// Y
 			) {
 				@Override
+				public int getMaxItemCount(ItemStack stack) {
+					if (stack.isOf(Items.ENCHANTED_BOOK)) {
+						return 1;
+					}
+					return super.getMaxItemCount(stack);
+				}
+				@Override
 				public boolean canInsert(ItemStack stack) {
 					return true;
 				}

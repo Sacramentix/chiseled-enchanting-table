@@ -50,7 +50,7 @@ public class ReworkEnchantedBookChestLoot {
                 .styled(style -> style.withColor(0x800080))
             );
 
-        var enchantmentRegistry = registries.getOptionalWrapper(RegistryKeys.ENCHANTMENT).get();
+        var enchantmentRegistry = registries.getOrThrow(RegistryKeys.ENCHANTMENT);
 
         Function<String, Reference<Enchantment>> enchantEntry = 
             (String s) -> enchantmentRegistry.getOptional(RegistryKey.of(RegistryKeys.ENCHANTMENT, Identifier.of(s))).get();

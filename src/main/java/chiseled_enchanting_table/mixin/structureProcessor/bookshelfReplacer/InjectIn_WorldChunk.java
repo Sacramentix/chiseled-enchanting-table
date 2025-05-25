@@ -29,20 +29,21 @@ public class InjectIn_WorldChunk {
     // this.world.setBlockState(blockPos, blockState2, Block.NO_REDRAW | Block.FORCE_STATE);
     
     @Inject(
-        method = "runPostProcessing()V",
+        method = "runPostProcessing(Lnet/minecraft/server/world/ServerWorld;)V",
         at = @At(    
             value = "INVOKE",
-            target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z",
+            target = "Lnet/minecraft/server/world/ServerWorld;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z",
             shift = At.Shift.AFTER
         )
         
     )
     private void injectBookshelfPostProcessing(
         CallbackInfo ci,
+        @Local(ordinal = 0) LocalRef<ServerWorld> localRefServerWorld,
         @Local(ordinal = 0) LocalRef<BlockPos> localRefBlockPos,
         @Local(ordinal = 0) LocalRef<BlockState> localRefBlockState
     ) {
-        if (!(this.world instanceof ServerWorld serverWorld)) return;
+        var serverWorld = localRefServerWorld.get();
         var blockPos    = localRefBlockPos.get();
         var blockState  = localRefBlockState.get();
         if (!(blockState.isOf(Blocks.BOOKSHELF))) return;

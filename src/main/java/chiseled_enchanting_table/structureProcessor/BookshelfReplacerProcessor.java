@@ -129,7 +129,7 @@ public class BookshelfReplacerProcessor extends StructureProcessor {
                 !targetBlockState.isOf(Blocks.TORCH)
             ) continue;
             var facingDirection = pos.subtract(blockPos);
-            var horizontalFacing = Direction.fromVector(facingDirection.getX(), 0, facingDirection.getZ());
+            var horizontalFacing = Direction.fromVector(facingDirection.getX(), 0, facingDirection.getZ(), Direction.NORTH);
             var newBlockState = Blocks.CHISELED_BOOKSHELF.getDefaultState();
 
             serverWorld.setBlockState(blockPos, newBlockState, Block.SKIP_DROPS);

@@ -119,7 +119,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
     // }
     
     @Override
-    protected int getRowTop(int index) {
+    public int getRowTop(int index) {
         return this.getY() + 4 - (int)this.getScrollAmount() + index * this.itemHeight + this.headerHeight;
     }
 

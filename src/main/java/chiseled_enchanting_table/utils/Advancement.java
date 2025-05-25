@@ -23,7 +23,7 @@ public class Advancement {
 
     public static void checkAllEnchantBook(PlayerEntity player, World world, ItemStack enchantable_item) {
         if (!enchantable_item.isOf(Items.ENCHANTED_BOOK)) return;
-        var numberOfEnchantExisting = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntrySet().size();
+        var numberOfEnchantExisting = world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getEntrySet().size();
         var numberOfEnchantOnBook = EnchantmentHelper.getEnchantments(enchantable_item).getEnchantments().size();
         if (numberOfEnchantOnBook >= numberOfEnchantExisting) {
             Advancement.give(player, "all_enchant_book");

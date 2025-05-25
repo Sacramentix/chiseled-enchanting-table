@@ -43,7 +43,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -111,7 +110,7 @@ public class ChiseledEnchantingTableBlock extends BlockWithEntity {
 			var builder = ComponentChanges.builder();
 			components.forEach(c->builder.add(c));
 			var stack = new ItemStack(
-				world.getRegistryManager().get(RegistryKeys.ITEM).getEntry(
+				world.getRegistryManager().getOrThrow(RegistryKeys.ITEM).getEntry(
 					Identifier.of("chiseled_enchanting_table", "chiseled_enchanting_table")
 				).get(), 1, builder.build()
 			);
@@ -155,18 +154,18 @@ public class ChiseledEnchantingTableBlock extends BlockWithEntity {
 	}
 
 	@Override
-	protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+	protected ActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 		if (stack.getItem() instanceof DyeItem dyeItem) {
 			if (world.getBlockEntity(pos) instanceof ChiseledEnchantingTableBlockEntity colorBlockEntity) {
 				var block = colorBlockEntity;
 				final int newColor = dyeItem.getColor().getEntityColor();
 				final int originalColor = colorBlockEntity.colorOrDefault() | 0xFF000000;
-				block.color = ColorHelper.Argb.averageArgb(newColor, originalColor) & 0x00FFFFFF; 
+				block.color = ColorHelper.average(newColor, originalColor) & 0x00FFFFFF; 
 				stack.decrementUnlessCreative(1, player);
 				block.markDirty();
 				world.updateListeners(pos, state, state, 0);
 				Advancement.give(player, "color_table");
-				return ItemActionResult.SUCCESS;
+				return ActionResult.SUCCESS;
 			}
 		}
 		
