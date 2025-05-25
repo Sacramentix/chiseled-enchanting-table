@@ -7,22 +7,15 @@ import chiseled_enchanting_table.chiseledEnchantingTable.ChiseledEnchantingTable
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.enums.NoteBlockInstrument;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
-import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Rarity;
 
 public class BlockRegistry {
 
@@ -31,23 +24,49 @@ public class BlockRegistry {
             "chiseled_enchanting_table",
             ChiseledEnchantingTableBlock::new, 
             Block.Settings.create()
-                .mapColor(MapColor.RED)
+                .mapColor(MapColor.PURPLE)
                 .instrument(NoteBlockInstrument.BASEDRUM)
                 .requiresTool()
                 .luminance(state -> 7)
-                .strength(5.0F, 1200.0F)
+                .strength(5.0F, 1200.0F),
+            true
         );
 
-    private static Block register(String id, Function<AbstractBlock.Settings, Block> factory, AbstractBlock.Settings settings) {
-        final Identifier identifier = ChiseledEnchantingTable.identifier(id);
-        final RegistryKey<Block> registryKey = RegistryKey.of(RegistryKeys.BLOCK, identifier);
-    
-        final Block block = Blocks.register(registryKey, factory, settings);
-        Items.register(block);
-        return block;
-    }
+
+    private static Block register(String name, Function<AbstractBlock.Settings, Block> blockFactory, AbstractBlock.Settings settings, boolean shouldRegisterItem) {
+		// Create a registry key for the block
+		RegistryKey<Block> blockKey = keyOfBlock(name);
+		// Create the block instance
+		Block block = blockFactory.apply(settings.registryKey(blockKey));
+
+		// Sometimes, you may not want to register an item for the block.
+		// Eg: if it's a technical block like `minecraft:moving_piston` or `minecraft:end_gateway`
+		if (shouldRegisterItem) {
+			// Items need to be registered with a different type of registry key, but the ID
+			// can be the same.
+			RegistryKey<Item> itemKey = keyOfItem(name);
+
+			BlockItem blockItem = new BlockItem(block, new Item.Settings().registryKey(itemKey));
+			Registry.register(Registries.ITEM, itemKey, blockItem);
+		}
+
+		return Registry.register(Registries.BLOCK, blockKey, block);
+	}
+
+	private static RegistryKey<Block> keyOfBlock(String name) {
+		return RegistryKey.of(RegistryKeys.BLOCK, ChiseledEnchantingTable.identifier(name));
+	}
+
+	private static RegistryKey<Item> keyOfItem(String name) {
+		return RegistryKey.of(RegistryKeys.ITEM, ChiseledEnchantingTable.identifier(name));
+	}
+
+
 
 	public static void init() {
         
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register((itemGroup) -> {
+            itemGroup.add(CHISELED_ENCHANTING_TABLE.asItem());
+        });
 	}
 }
