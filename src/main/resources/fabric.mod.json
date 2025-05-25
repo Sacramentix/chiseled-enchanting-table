@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "chiseled-enchanting-table",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"name": "Chiseled Enchanting Table",
 	"description": "A rework of enchantment progression. You can now enchant your gear using Enchanted book placed in nearby chiseld bookshelves using a chiseled enchanting table",
 	"authors": [
