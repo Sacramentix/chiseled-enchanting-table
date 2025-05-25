@@ -29,13 +29,13 @@ public class ChiseledEnchantingTableClient implements ClientModInitializer {
 			BlockRegistry.CHISELED_ENCHANTING_TABLE
 		);
 		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.CHISELED_ENCHANTING_TABLE, RenderLayer.getCutoutMipped());
-		ColorProviderRegistry.ITEM.register(
-			(stack, tintIndex) -> {
-				var dyed_color = stack.get(DataComponentTypes.DYED_COLOR);
-				return dyed_color != null ? dyed_color.rgb() : 0xA020F0;
-			}, 
-			BlockRegistry.CHISELED_ENCHANTING_TABLE
-		);
+		// ColorProviderRegistry.ITEM.register(
+		// 	(stack, tintIndex) -> {
+		// 		var dyed_color = stack.get(DataComponentTypes.DYED_COLOR);
+		// 		return dyed_color != null ? dyed_color.rgb() : 0xA020F0;
+		// 	}, 
+		// 	BlockRegistry.CHISELED_ENCHANTING_TABLE
+		// );
 
 	}
 }
