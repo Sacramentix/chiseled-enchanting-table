@@ -3,10 +3,10 @@
 	"package": "chiseled_enchanting_table.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"anvil.RemoveEnchantUpgrade",
+		"accessor.ItemAccessor",
 
-		"bundle.change_weight_enchanted_book.Part1",
-		"bundle.change_weight_enchanted_book.Part2",
+		"anvil.RemoveEnchantMerge",
+		"anvil.RemoveXpCostScaling",
 
 		"chiseled_bookshelf.AddRandomTick",
 
