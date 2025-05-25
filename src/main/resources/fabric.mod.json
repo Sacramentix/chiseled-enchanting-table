@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "chiseled-enchanting-table",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"name": "Chiseled Enchanting Table",
 	"description": "A rework of enchantment progression. You can now enchant your gear using Enchanted book placed in nearby chiseld bookshelves using a chiseled enchanting table",
 	"authors": [
@@ -36,7 +36,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.16.14",
-		"minecraft": "~1.21.4",
+		"minecraft": "~1.21.5",
 		"java": ">=21",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"

@@ -6,8 +6,8 @@ import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.component.ComponentMap.Builder;
+import net.minecraft.component.ComponentsAccess;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.text.Text;
@@ -43,9 +43,9 @@ public class ChiseledEnchantingTableBlockEntity extends BlockEntity implements N
 
 	public void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
 		super.readNbt(nbt, registryLookup);
-		color = nbt.contains("color",  NbtElement.INT_TYPE) ? nbt.getInt("color") : -1;
-		if (nbt.contains("CustomName", NbtElement.STRING_TYPE)) {
-			this.customName = tryParseCustomName(nbt.getString("CustomName"), registryLookup);
+		color = nbt.contains("color") ? nbt.getInt("color").get() : -1;
+		if (nbt.contains("CustomName")) {
+			this.customName = tryParseCustomName(nbt, registryLookup);
 		}
 		if (world != null) {
 			world.updateListeners(pos, getCachedState(), getCachedState(), 0);
@@ -81,14 +81,14 @@ public class ChiseledEnchantingTableBlockEntity extends BlockEntity implements N
 	public void addComponents(Builder componentMapBuilder) {
 		super.addComponents(componentMapBuilder);
 		componentMapBuilder.add(DataComponentTypes.CUSTOM_NAME, this.customName);
-		componentMapBuilder.add(DataComponentTypes.DYED_COLOR, new DyedColorComponent(this.color, true));
+		componentMapBuilder.add(DataComponentTypes.DYED_COLOR, new DyedColorComponent(this.color));
 	}
 
 	public ComponentMap getAllComponents() {
 		var componentMapBuilder = ComponentMap.builder();
 		super.addComponents(componentMapBuilder);
 		componentMapBuilder.add(DataComponentTypes.CUSTOM_NAME, this.customName);
-		if (this.color != -1) componentMapBuilder.add(DataComponentTypes.DYED_COLOR, new DyedColorComponent(this.color, true));
+		if (this.color != -1) componentMapBuilder.add(DataComponentTypes.DYED_COLOR, new DyedColorComponent(this.color));
 		return componentMapBuilder.build();
 	}
 

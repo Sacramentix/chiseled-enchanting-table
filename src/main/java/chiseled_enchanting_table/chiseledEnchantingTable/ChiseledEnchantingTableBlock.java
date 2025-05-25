@@ -129,7 +129,7 @@ public class ChiseledEnchantingTableBlock extends BlockWithEntity {
 		while (var5.hasNext()) {
 			BlockPos blockPos = (BlockPos) var5.next();
 			if (random.nextInt(16) == 0 && canAccessPowerProvider(world, pos, blockPos)) {
-				world.addParticle(ParticleTypes.ENCHANT, (double) pos.getX() + 0.5D, (double) pos.getY() + 2.0D,
+				world.addParticleClient(ParticleTypes.ENCHANT, (double) pos.getX() + 0.5D, (double) pos.getY() + 2.0D,
 						(double) pos.getZ() + 0.5D, (double) ((float) blockPos.getX() + random.nextFloat()) - 0.5D,
 						(double) ((float) blockPos.getY() - random.nextFloat() - 1.0F),
 						(double) ((float) blockPos.getZ() + random.nextFloat()) - 0.5D);
