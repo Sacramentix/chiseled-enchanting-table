@@ -125,7 +125,8 @@ public class BookshelfReplacerProcessor extends StructureProcessor {
             if (
                 !targetBlockState.isAir() && 
                 !targetBlockState.isOf(Blocks.COBWEB) &&
-                !targetBlockState.isOf(Blocks.TORCH)
+                !targetBlockState.isOf(Blocks.TORCH) &&
+                !targetBlockState.isOf(Blocks.WALL_TORCH) 
             ) continue;
             var facingDirection = pos.subtract(blockPos);
             var horizontalFacing = Direction.fromVector(facingDirection.getX(), 0, facingDirection.getZ(), Direction.NORTH);
