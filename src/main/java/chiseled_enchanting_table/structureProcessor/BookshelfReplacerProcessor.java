@@ -52,7 +52,6 @@ public class BookshelfReplacerProcessor extends StructureProcessor {
         for (int i = 0; i < currentBlockInfos.size(); i++) {
             var currentBlockInfo = currentBlockInfos.get(i);
             if (currentBlockInfo.state().isOf(Blocks.BOOKSHELF)) {
-                // System.out.println("reprocess Blocks.BOOKSHELF found!");
                 
                 var cpos = currentBlockInfo.pos();
 
