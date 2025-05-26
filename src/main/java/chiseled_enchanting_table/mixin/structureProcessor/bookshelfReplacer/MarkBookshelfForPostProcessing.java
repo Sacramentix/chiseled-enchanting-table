@@ -42,7 +42,8 @@ public class MarkBookshelfForPostProcessing {
         var blockPos = localRefBlockPos.get();
         var blockState = localRefBlockState.get();
         var world = localRefWorld.get();
-        if (blockState.isOf(Blocks.CHISELED_BOOKSHELF)) {
+        
+        if (blockState.isOf(Blocks.BOOKSHELF)) {
             world.getChunk(blockPos).markBlockForPostProcessing(blockPos);
         }
     }
