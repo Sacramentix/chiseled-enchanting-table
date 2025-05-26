@@ -21,18 +21,12 @@ import net.minecraft.server.world.ServerWorld;
 public class InjectIn_WorldChunk {
     @Shadow
     private World world;
-
-    // runPostProcessing
-
-    // BlockPos blockPos = ProtoChunk.joinBlockPos(short_, this.sectionIndexToCoord(i), chunkPos);
-    // BlockState blockState = this.getBlockState(blockPos);
-    // this.world.setBlockState(blockPos, blockState2, Block.NO_REDRAW | Block.FORCE_STATE);
     
     @Inject(
         method = "runPostProcessing(Lnet/minecraft/server/world/ServerWorld;)V",
         at = @At(    
-            value = "INVOKE",
-            target = "Lnet/minecraft/server/world/ServerWorld;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z",
+            value = "INVOKE_ASSIGN",
+            target = "Lnet/minecraft/world/chunk/WorldChunk;getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;",
             shift = At.Shift.AFTER
         )
         
@@ -46,7 +40,9 @@ public class InjectIn_WorldChunk {
         var serverWorld = localRefServerWorld.get();
         var blockPos    = localRefBlockPos.get();
         var blockState  = localRefBlockState.get();
-        if (!(blockState.isOf(Blocks.BOOKSHELF))) return;
+        
+        if (!blockState.isOf(Blocks.BOOKSHELF)) return;
+
         BookshelfReplacerProcessor.bookshelfPostProcessing(serverWorld, blockPos);
     }
 
