@@ -25,8 +25,8 @@ public class InjectIn_WorldChunk {
     @Inject(
         method = "runPostProcessing()V",
         at = @At(    
-            value = "INVOKE_ASSIGN",
-            target = "Lnet/minecraft/world/chunk/WorldChunk;getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;",
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)Z",
             shift = At.Shift.AFTER
         )
         
