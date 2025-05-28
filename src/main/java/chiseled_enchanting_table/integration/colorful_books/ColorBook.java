@@ -84,7 +84,7 @@ public class ColorBook {
 
 
         var componentBuilder = ComponentChanges.builder();
-		componentBuilder.add(DataComponentTypes.DYED_COLOR, new DyedColorComponent(color));
+		componentBuilder.add(DataComponentTypes.DYED_COLOR, new DyedColorComponent(color,  true));
         itemStack.applyChanges(componentBuilder.build());
     }
 
