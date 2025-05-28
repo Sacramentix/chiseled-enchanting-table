@@ -6,8 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import chiseled_enchanting_table.integration.colorful_books.ColorBook;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.component.ComponentChanges;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LoreComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,6 +23,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 public class ChiseledBookshelfLootTable {
@@ -61,6 +66,8 @@ public class ChiseledBookshelfLootTable {
                     .findFirst()
                     .orElseThrow();
                 book.addEnchantment(randomEnchant, level);
+                ColorBook.enchantedWithConfig(book);
+                addLore(book);
                 return book;
             };
 
@@ -88,6 +95,8 @@ public class ChiseledBookshelfLootTable {
                     var cappedLevel =  cap < level ? cap : level;
                     book.addEnchantment(enchant, cappedLevel);
                 });
+                ColorBook.enchantedWithConfig(book);
+                addLore(book);
                 return book;
             };
         Supplier<ItemStack> enchantSetForRandomItemPool = 
@@ -165,6 +174,7 @@ public class ChiseledBookshelfLootTable {
                     nbtItems.add(nbtBook);
                 } else {
                     var book = new ItemStack(Items.BOOK);
+                    ColorBook.randomly(book, randomGenerator);
                     var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
                     nbtBook.putByte("Slot", (byte) i);
                     nbtItems.add(nbtBook);
@@ -222,6 +232,7 @@ public class ChiseledBookshelfLootTable {
                     nbtItems.add(nbtBook);
                 } else {
                     var book = new ItemStack(Items.BOOK);
+                    ColorBook.randomly(book, randomGenerator);
                     var nbtBook = (NbtCompound) book.encode(world.getRegistryManager());
                     nbtBook.putByte("Slot", (byte) i);
                     nbtItems.add(nbtBook);
@@ -236,6 +247,18 @@ public class ChiseledBookshelfLootTable {
 
         nbt.put("Items", nbtItems);
         return new NbtCompoundWithBlockState(nbt, blockState);
+    }
+
+    public static void addLore(ItemStack itemStack) {
+        var componentBuilder = ComponentChanges.builder();
+		componentBuilder.add(
+            DataComponentTypes.LORE,
+            new LoreComponent(List.of(
+                Text.literal("Chiseled Enchanting Table")
+                    .styled(style -> style.withColor(0x800080))
+            ))
+        );
+        itemStack.applyChanges(componentBuilder.build());
     }
 
     public record NbtCompoundWithBlockState(NbtCompound nbt, BlockState state) {
