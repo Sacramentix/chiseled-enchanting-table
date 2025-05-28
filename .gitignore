@@ -41,5 +41,6 @@ replay_*.log
 *.jfr
 
 .env
+libs/
 
 .devcontainer/
