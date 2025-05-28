@@ -3,6 +3,7 @@ package chiseled_enchanting_table.chiseledEnchantingTable;
 import chiseled_enchanting_table.ChiseledEnchantingTable;
 import chiseled_enchanting_table.utils.Advancement;
 import chiseled_enchanting_table.utils.EnchantmentWithLevel;
+import chiseled_enchanting_table.utils.InventoryUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import chiseled_enchanting_table.registry.ScreenHandlerRegistry;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -27,6 +28,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
@@ -493,11 +495,10 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 			ItemStack clickedStack = this.getSlot(slotIndex).getStack();
 			if (clickedStack.isEmpty()) return;
 			if ((slotIndex == COST_SLOT) || (slotIndex == ENCHANTABLE_SLOT) ) {
-
-				if (!this.insertItem(this.getSlot(slotIndex).getStack(), 2, 38, true)) {
-					return;
-				}
-				this.getSlot(slotIndex).setStack(ItemStack.EMPTY);
+				InventoryUtils.insertItem(this.player, clickedStack, Optional.empty());
+				clickedStack.setCount(0);
+				this.inventory.markDirty();
+				this.player.getInventory().markDirty();
 				return;
 			}
 			var clickedStackNoEnchant = clickedStack.copy();
@@ -523,25 +524,22 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 					}
 				}
 			} else {
+				
 				if (!this.getSlot(COST_SLOT).hasStack()) {
-					this.getSlot(COST_SLOT).setStack(clickedStack.copy());
-					clickedStack.setCount(0);
+					this.insertItem(clickedStack, COST_SLOT, COST_SLOT+1, false);
 				} else {
 					var costSlotStack = this.getSlot(COST_SLOT).getStack();
-					if (costSlotStack.isEmpty()) {
-						this.getSlot(COST_SLOT).setStack(clickedStack.copy());
-						clickedStack.setCount(0);
-					} else if (ItemStack.areItemsAndComponentsEqual(clickedStack, costSlotStack)) {
+					if (ItemStack.areItemsAndComponentsEqual(clickedStack, costSlotStack)) {
 						this.insertItem(clickedStack, COST_SLOT, COST_SLOT+1, false);
 					} else {
-						// Swap the stacks if they are different
-						var tempStack = costSlotStack.copy();
-						this.getSlot(COST_SLOT).setStack(clickedStack.copy());
-						this.getSlot(slotIndex).setStack(tempStack);
+						InventoryUtils.insertItem(this.player, costSlotStack, Optional.of(slotIndex));
+						costSlotStack.setCount(0);
 					}
 
 				}
 			}
+			this.inventory.markDirty();
+			this.player.getInventory().markDirty();
 			return;
 		}
 		super.onSlotClick(slotIndex, button, actionType, player);
