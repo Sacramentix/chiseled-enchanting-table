@@ -119,8 +119,8 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
     // }
     
     @Override
-    protected int getRowTop(int index) {
-        return this.getY() + 4 - (int)this.getScrollAmount() + index * this.itemHeight + this.headerHeight;
+    public int getRowTop(int index) {
+        return this.getY() + 4 - (int)this.getScrollY() + index * this.itemHeight + this.headerHeight;
     }
 
     public final Identifier SCROLLER_TEXTURE = Identifier.ofVanilla("widget/scroller");
@@ -147,46 +147,14 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderWidget(context, mouseX, mouseY, delta);
         return;
-        // this.hoveredEntry = this.isMouseOver((double)mouseX, (double)mouseY) ? this.getEntryAtPosition((double)mouseX, (double)mouseY) : null;
-        // this.drawMenuListBackground(context);
-        // this.enableScissor(context);
-        // int i;
-        // int j;
-
-        // this.renderList(context, mouseX, mouseY, delta);
-        // context.disableScissor();
-        // this.drawHeaderAndFooterSeparators(context);
-        // if (this.isScrollbarVisible()) {
-        //     i = this.getScrollbarX();
-        //     j = (int)((float)(this.height * this.height) / (float)this.getMaxPosition());
-        //     j = MathHelper.clamp(j, 32, this.height - 8);
-        //     int k = (int)this.getScrollAmount() * (this.height - j) / this.getMaxScroll() + this.getY();
-        //     if (k < this.getY()) {
-        //         k = this.getY();
-        //     }
-
-        //     RenderSystem.enableBlend();
-        //     // context.drawGuiTexture(SCROLLER_BACKGROUND_TEXTURE, i, this.getY(), 6, this.getHeight());
-        //     context.drawGuiTexture(SCROLLER_TEXTURE, i, k, 6, j);
-        //     RenderSystem.disableBlend();
-        // }
-
-        // this.renderDecorations(context, mouseX, mouseY);
-        // RenderSystem.disableBlend();
     }
-
-    @Override
-    protected boolean isScrollbarVisible() {
-        return this.getMaxScroll() > 0;
-    }
-
 
     public void updateEntry(ItemStack enchantable_item, ItemStack cost_item_stack) {
         var navigationIndex = saveNavigationIfSameItem(enchantable_item, cost_item_stack);
 
         this.clearEntries();
         if (navigationIndex == -1) {
-            this.setScrollAmount(0);
+            this.setScrollY(0);
         }
         this.enchantable_item = enchantable_item;
         var enchantFromBook = cost_item_stack.isOf(Items.ENCHANTED_BOOK);

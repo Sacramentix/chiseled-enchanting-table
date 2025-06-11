@@ -42,7 +42,7 @@ public class DepthBasedEfficiency implements LootFunction {
     public ItemStack apply(ItemStack stack, LootContext ctx) {
         if (!stack.isOf(Items.ENCHANTED_BOOK)) return stack;
         var world = ctx.getWorld();
-        var efficiency = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Identifier.ofVanilla("efficiency")).get();
+        var efficiency = world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getEntry(Identifier.ofVanilla("efficiency")).get();
         var mineshaftTopY = world.getSeaLevel();
         var mineshaftBottomY = world.getBottomY();
         var currentY = ctx.get(LootContextParameters.ORIGIN).y;

@@ -52,7 +52,6 @@ public class BookshelfReplacerProcessor extends StructureProcessor {
         for (int i = 0; i < currentBlockInfos.size(); i++) {
             var currentBlockInfo = currentBlockInfos.get(i);
             if (currentBlockInfo.state().isOf(Blocks.BOOKSHELF)) {
-                // System.out.println("reprocess Blocks.BOOKSHELF found!");
                 
                 var cpos = currentBlockInfo.pos();
 
@@ -126,10 +125,11 @@ public class BookshelfReplacerProcessor extends StructureProcessor {
             if (
                 !targetBlockState.isAir() && 
                 !targetBlockState.isOf(Blocks.COBWEB) &&
-                !targetBlockState.isOf(Blocks.TORCH)
+                !targetBlockState.isOf(Blocks.TORCH) &&
+                !targetBlockState.isOf(Blocks.WALL_TORCH) 
             ) continue;
             var facingDirection = pos.subtract(blockPos);
-            var horizontalFacing = Direction.fromVector(facingDirection.getX(), 0, facingDirection.getZ());
+            var horizontalFacing = Direction.fromVector(facingDirection.getX(), 0, facingDirection.getZ(), Direction.NORTH);
             var newBlockState = Blocks.CHISELED_BOOKSHELF.getDefaultState();
 
             serverWorld.setBlockState(blockPos, newBlockState, Block.SKIP_DROPS);

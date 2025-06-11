@@ -5,7 +5,7 @@
       },
       "title": "Chiseled journey begin!",
       "description": "Craft your first chiseled enchanting table.",
-      "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+      "background": "minecraft:block/crying_obsidian"
     },
     "criteria": {
       "craft": {

@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "chiseled_enchanting_table:block/chiseled_enchanting_table",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": 10494192
+      }
+    ]
+  }
+}

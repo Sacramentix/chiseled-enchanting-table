@@ -12,10 +12,10 @@ import com.modrinth.minotaur.dependencies.ModDependency
 modrinth {
 	token = System.getenv("MODRINTH_TOKEN")
     projectId = '3GoniWXG' // The ID of your Modrinth project. Slugs will not work.
-    versionNumber = '0.1.0' // The (preferably SemVer) version of the mod. If not specified, it'll use the `version` declaration
+    versionNumber = '0.2.3' // The (preferably SemVer) version of the mod. If not specified, it'll use the `version` declaration
     versionName = 'Beta release' // The version title. If not specified, it'll use the version number
     uploadFile = remapJar // Tells Minotaur to use the remapped jar
-    gameVersions = ['1.21.1'] // An array of game versions the version supports
+    gameVersions = ['1.21.5'] // An array of game versions the version supports
     loaders = ['fabric'] // Self-explanatory.
     dependencies = [
             new ModDependency('P7dR8mSH', 'required') // Creates a new required dependency on Fabric API
@@ -59,6 +59,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
+	// modCompileOnly files('libs/colorful-books-1.4+1.21.5.jar')
 }
 
 processResources {

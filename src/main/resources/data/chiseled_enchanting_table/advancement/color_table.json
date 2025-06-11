@@ -3,9 +3,7 @@
     "icon": {
       "id": "chiseled_enchanting_table:chiseled_enchanting_table",
       "components": {
-        "minecraft:dyed_color": {
-          "rgb": 8373791
-        }
+        "minecraft:dyed_color": 8373791
       }
     },
     "title": "I hate purple. What if I...",

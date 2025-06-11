@@ -21,7 +21,7 @@ public record EnchantmentWithLevel(Identifier enchantment_id, int enchantment_le
      */
     @Nullable
     public static Enchantment IdentifierToEnchantment(Identifier enchantment_id, World world) {
-        return world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).get(enchantment_id);
+        return world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).get(enchantment_id);
     }
 
     public boolean is(String id) {
@@ -38,7 +38,7 @@ public record EnchantmentWithLevel(Identifier enchantment_id, int enchantment_le
      */
     @Nullable
     public static Identifier EnchantmentToIdentifier(Enchantment enchantment, World world) {
-        return world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getId(enchantment);
+        return world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getId(enchantment);
     }
 
     /**
@@ -51,7 +51,7 @@ public record EnchantmentWithLevel(Identifier enchantment_id, int enchantment_le
      */
     @Nullable
     public static RegistryEntry<Enchantment> IdentifierToRegistryEntryEnchantment(Identifier enchantment_id, World world) {
-        return world.getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(enchantment_id).get();
+        return world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getEntry(enchantment_id).get();
     }
 
     public static final PacketCodec<PacketByteBuf, EnchantmentWithLevel> ENCHANTMENT_WITH_LEVEL_CODEC = 
