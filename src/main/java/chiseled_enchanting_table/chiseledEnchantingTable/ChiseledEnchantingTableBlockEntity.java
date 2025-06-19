@@ -10,8 +10,9 @@ import net.minecraft.component.ComponentsAccess;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.RegistryWrapper.WrapperLookup;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.text.Text;
-import net.minecraft.text.Text.Serialization;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
 
@@ -30,23 +31,23 @@ public class ChiseledEnchantingTableBlockEntity extends BlockEntity implements N
 		this.floatingBook = new FloatingBook();
 	}
 
-	public void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
-		super.writeNbt(nbt, registryLookup);
+	@Override
+	public void writeData(WriteView view) {
+		super.writeData(view);
 		if (color != -1) {
-			nbt.putInt("color", color);
+			view.putInt("color", color);
 		}
 		if (this.hasCustomName()) {
-			nbt.putString("CustomName", Serialization.toJsonString(this.customName, registryLookup));
+			view.putString("CustomName", customName.getString());
 		}
 
 	}
 
-	public void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
-		super.readNbt(nbt, registryLookup);
-		color = nbt.contains("color") ? nbt.getInt("color").get() : -1;
-		if (nbt.contains("CustomName")) {
-			this.customName = tryParseCustomName(nbt, registryLookup);
-		}
+	@Override
+	public void readData(ReadView view) {
+		super.readData(view);
+		color = view.getInt("color", -1);
+		this.customName = tryParseCustomName(view, "CustomName");
 		if (world != null) {
 			world.updateListeners(pos, getCachedState(), getCachedState(), 0);
 		}
@@ -101,7 +102,7 @@ public class ChiseledEnchantingTableBlockEntity extends BlockEntity implements N
 	
 	public int color = -1;
 
-	public int DEFAULT_COLOR = 0xA020F0;
+	public static int DEFAULT_COLOR = 0xFFA020F0;
 
 	public int colorOrDefault() {
 		return color == -1 ? DEFAULT_COLOR : color;

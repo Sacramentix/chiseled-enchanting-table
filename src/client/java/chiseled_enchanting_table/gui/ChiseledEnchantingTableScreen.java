@@ -5,10 +5,10 @@ import chiseled_enchanting_table.chiseledEnchantingTable.ChiseledEnchantingTable
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.gui.tooltip.TooltipSubmenuHandler;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -45,6 +45,12 @@ public class ChiseledEnchantingTableScreen extends HandledScreen<ChiseledEnchant
 		);
 		this.addDrawableChild(this.scrollContainer);
     }
+
+		@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+		scrollContainer.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+		return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+	}
 
 	@Override
 	protected void drawMouseoverTooltip(DrawContext context, int mouseX, int mouseY) {
@@ -98,7 +104,7 @@ public class ChiseledEnchantingTableScreen extends HandledScreen<ChiseledEnchant
     protected void drawBackground(DrawContext ctx, float delta, int mouseX, int mouseY) {
         int i = this.x;
 		int j = this.y;
-		ctx.drawTexture(RenderLayer::getGuiTextured,BACKGROUND, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
+		ctx.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight, this.backgroundWidth, this.backgroundHeight);
 
     }
 }

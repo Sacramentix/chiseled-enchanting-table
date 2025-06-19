@@ -1,5 +1,6 @@
 package chiseled_enchanting_table;
 
+import chiseled_enchanting_table.chiseledEnchantingTable.ChiseledEnchantingTableBlockEntity;
 import chiseled_enchanting_table.gui.ChiseledEnchantingTableScreen;
 import chiseled_enchanting_table.registry.BlockRegistry;
 import chiseled_enchanting_table.registry.EntityRegistry;
@@ -8,12 +9,11 @@ import chiseled_enchanting_table.render.ChiseledEnchantingTableBlockEntityRender
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.BlockRenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.component.DataComponentTypes;
 
 @Environment(EnvType.CLIENT)
 public class ChiseledEnchantingTableClient implements ClientModInitializer {
@@ -25,17 +25,9 @@ public class ChiseledEnchantingTableClient implements ClientModInitializer {
 		HandledScreens.register(ScreenHandlerRegistry.CHISELED_ENCHANTING_TABLE_SCREEN_HANDLER, ChiseledEnchantingTableScreen::new);
 		ColorProviderRegistry.BLOCK.register(
 			(state, view, pos, tintIndex) -> 
-				view != null && view.getBlockEntityRenderData(pos) instanceof Integer integer ? integer : 0x000000,
+				view != null && view.getBlockEntityRenderData(pos) instanceof Integer integer ? integer : ChiseledEnchantingTableBlockEntity.DEFAULT_COLOR,
 			BlockRegistry.CHISELED_ENCHANTING_TABLE
 		);
-		BlockRenderLayerMap.INSTANCE.putBlock(BlockRegistry.CHISELED_ENCHANTING_TABLE, RenderLayer.getCutoutMipped());
-		// ColorProviderRegistry.ITEM.register(
-		// 	(stack, tintIndex) -> {
-		// 		var dyed_color = stack.get(DataComponentTypes.DYED_COLOR);
-		// 		return dyed_color != null ? dyed_color.rgb() : 0xA020F0;
-		// 	}, 
-		// 	BlockRegistry.CHISELED_ENCHANTING_TABLE
-		// );
-
+		BlockRenderLayerMap.putBlock(BlockRegistry.CHISELED_ENCHANTING_TABLE, BlockRenderLayer.CUTOUT_MIPPED);
 	}
 }

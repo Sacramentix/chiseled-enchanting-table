@@ -6,11 +6,14 @@ import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.joml.Matrix3x2f;
+
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import chiseled_enchanting_table.utils.CustomDrawContext;
 import chiseled_enchanting_table.utils.EnchantmentWithLevel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.TooltipSubmenuHandler;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -48,7 +51,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
         this.headerHeight = 0;
         this.getNavigationFocus();
 	}
-
+    
     @Override
     protected void drawSelectionHighlight(DrawContext context, int y, int entryWidth, int entryHeight, int borderColor, int fillColor) {
 
@@ -399,11 +402,10 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
             var matrixStack = drawContext.getMatrices();
 
             // Push the current matrix state
-            matrixStack.push();
-
+            matrixStack.pushMatrix();
             // Apply scaling
-            matrixStack.scale(scale, scale, 1.0f);
-            matrixStack.translate(0.0F, 0.0F, 500.0F);
+            matrixStack.scale(scale, scale);
+            matrixStack.translate(0.0F, 0.0F);
             // Adjust the position to account for scaling
             var scaledX = Math.round(x / scale);
             var scaledY = Math.round(y / scale);
@@ -411,7 +413,9 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
             // Draw the text with shadow
             drawContext.drawTextWithShadow(client.textRenderer, text, (int) scaledX, (int) scaledY, color);
             // Pop the matrix state to restore it
-            matrixStack.pop();
+            matrixStack.popMatrix();
+
+            // drawContext.drawTextWithShadow(client.textRenderer, text, (int) x, (int) y, color);
         }
 
         @Override

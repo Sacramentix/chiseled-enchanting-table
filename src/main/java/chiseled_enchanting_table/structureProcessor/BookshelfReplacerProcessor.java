@@ -13,11 +13,14 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.ChiseledBookshelfBlockEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
+import net.minecraft.storage.NbtReadView;
+import net.minecraft.storage.ReadView;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplate;
 import net.minecraft.structure.processor.StructureProcessor;
 import net.minecraft.structure.processor.StructureProcessorType;
 import net.minecraft.util.BlockRotation;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.ServerWorldAccess;
@@ -140,8 +143,9 @@ public class BookshelfReplacerProcessor extends StructureProcessor {
             var blockStateWithBook = nbtWithBlockState.state().with(
                 Properties.HORIZONTAL_FACING, horizontalFacing
             );
+            
             serverWorld.setBlockState(blockPos, blockStateWithBook, Block.SKIP_DROPS);
-            cbsbe.read(nbt,  serverWorld.getRegistryManager());
+            cbsbe.read(NbtReadView.create(ErrorReporter.EMPTY, serverWorld.getRegistryManager(), nbt));
             cbsbe.markDirty();
             break;
         }
