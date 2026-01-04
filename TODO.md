@@ -21,6 +21,8 @@ that can contain book and enchanted book
 
 - ✅ can consume enchanted book in infuse slot to enchant without xp cost
 
+- Add ctrl shortcut to fill slot with the current item cost
+
 - 🚧 rework chest loot table enchanted book
 
 - 🚧 add coherent loot table to chiseled bookshelves

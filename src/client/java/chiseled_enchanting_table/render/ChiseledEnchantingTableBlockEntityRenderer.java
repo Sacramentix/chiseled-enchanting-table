@@ -33,16 +33,16 @@ public class ChiseledEnchantingTableBlockEntityRenderer
 		this.spriteHolder = ctx.spriteHolder();
 		this.book = new BookModel(ctx.getLayerModelPart(EntityModelLayers.BOOK));
 	}
-
+	@Override
 	public ChiseledEnchantingTableBlockEntityRenderState createRenderState() {
 		return new ChiseledEnchantingTableBlockEntityRenderState();
 	}
 
 	public void updateRenderState(ChiseledEnchantingTableBlockEntity CETBE, ChiseledEnchantingTableBlockEntityRenderState CETBERS, float f, Vec3d vec3d, @Nullable ModelCommandRenderer.CrumblingOverlayCommand crumblingOverlayCommand) {
-		
+		BlockEntityRenderer.super.updateRenderState(CETBE, CETBERS, f, vec3d, crumblingOverlayCommand);
 		CETBERS.pageAngle = MathHelper.lerp(f, CETBE.floatingBook.pageAngle, CETBE.floatingBook.nextPageAngle);
 		CETBERS.pageTurningSpeed = MathHelper.lerp(f, CETBE.floatingBook.pageTurningSpeed, CETBE.floatingBook.nextPageTurningSpeed);
-		CETBERS.ticks = (float)CETBERS.ticks + f;
+		CETBERS.ticks = (float)CETBE.floatingBook.ticks + f;
 
 		float g;
 		for(g = CETBE.floatingBook.bookRotation - CETBE.floatingBook.lastBookRotation; g >= 3.1415927F; g -= 6.2831855F) {
@@ -55,17 +55,17 @@ public class ChiseledEnchantingTableBlockEntityRenderer
 		CETBERS.bookRotationDegrees = CETBE.floatingBook.lastBookRotation + g * f;
 	}
 	@Override
-	public void render(ChiseledEnchantingTableBlockEntityRenderState enchantingTableBlockEntityRenderState, MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, CameraRenderState cameraRenderState) {
+	public void render(ChiseledEnchantingTableBlockEntityRenderState CETBERS, MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, CameraRenderState cameraRenderState) {
 		matrixStack.push();
 		matrixStack.translate(0.5F, 0.75F, 0.5F);
-		matrixStack.translate(0.0F, 0.1F + MathHelper.sin(enchantingTableBlockEntityRenderState.ticks * 0.1F) * 0.01F, 0.0F);
-		float f = enchantingTableBlockEntityRenderState.bookRotationDegrees;
+		matrixStack.translate(0.0F, 0.1F + MathHelper.sin(CETBERS.ticks * 0.1F) * 0.01F, 0.0F);
+		float f = CETBERS.bookRotationDegrees;
 		matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(-f));
 		matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(80.0F));
-		float g = MathHelper.fractionalPart(enchantingTableBlockEntityRenderState.pageAngle + 0.25F) * 1.6F - 0.3F;
-		float h = MathHelper.fractionalPart(enchantingTableBlockEntityRenderState.pageAngle + 0.75F) * 1.6F - 0.3F;
-		BookModel.BookModelState bookModelState = new BookModel.BookModelState(enchantingTableBlockEntityRenderState.ticks, MathHelper.clamp(g, 0.0F, 1.0F), MathHelper.clamp(h, 0.0F, 1.0F), enchantingTableBlockEntityRenderState.pageTurningSpeed);
-		orderedRenderCommandQueue.submitModel(this.book, bookModelState, matrixStack, BOOK_TEXTURE.getRenderLayer(RenderLayer::getEntitySolid), enchantingTableBlockEntityRenderState.lightmapCoordinates, OverlayTexture.DEFAULT_UV, -1, this.spriteHolder.getSprite(BOOK_TEXTURE), 0, enchantingTableBlockEntityRenderState.crumblingOverlay);
+		float g = MathHelper.fractionalPart(CETBERS.pageAngle + 0.25F) * 1.6F - 0.3F;
+		float h = MathHelper.fractionalPart(CETBERS.pageAngle + 0.75F) * 1.6F - 0.3F;
+		BookModel.BookModelState bookModelState = new BookModel.BookModelState(CETBERS.ticks, MathHelper.clamp(g, 0.0F, 1.0F), MathHelper.clamp(h, 0.0F, 1.0F), CETBERS.pageTurningSpeed);
+		orderedRenderCommandQueue.submitModel(this.book, bookModelState, matrixStack, BOOK_TEXTURE.getRenderLayer(RenderLayer::getEntitySolid), CETBERS.lightmapCoordinates, OverlayTexture.DEFAULT_UV, -1, this.spriteHolder.getSprite(BOOK_TEXTURE), 0, CETBERS.crumblingOverlay);
 		matrixStack.pop();
 	}
 
