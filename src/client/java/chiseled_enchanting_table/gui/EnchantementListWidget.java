@@ -12,9 +12,11 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import chiseled_enchanting_table.utils.CustomDrawContext;
 import chiseled_enchanting_table.utils.EnchantmentWithLevel;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.TooltipSubmenuHandler;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,14 +50,13 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
         this.cost_item_stack = handler.get_cost_item();
         this.unlocked_enchantements = handler.unlocked_enchantements;
         this.player = handler.player;
-        this.headerHeight = 0;
         this.getNavigationFocus();
 	}
     
-    @Override
-    protected void drawSelectionHighlight(DrawContext context, int y, int entryWidth, int entryHeight, int borderColor, int fillColor) {
+    // @Override
+    // protected void drawSelectionHighlight(DrawContext context, int y, int entryWidth, int entryHeight, int borderColor, int fillColor) {
 
-    }
+    // }
     
     
     @Override
@@ -64,14 +65,15 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyInput keyInput) {
+        var keyCode = keyInput.getKeycode();
         if (keyCode == 257 || keyCode == 335) { // Enter key (257 for Enter, 335 for Numpad Enter)
             var focusedEntry = this.getFocused();
             if (focusedEntry instanceof EnchantUiEntry enchantUiEntry) {
                 enchantUiEntry.serverSendApplyEnchant();
             }
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(keyInput);
     }
     public int saveNavigationIfSameItem(ItemStack enchantable_item, ItemStack cost_item_stack) {
         var previousIsBook = this.cost_item_stack.isOf(Items.ENCHANTED_BOOK) || this.cost_item_stack.isOf(Items.BOOK);
@@ -123,7 +125,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
     
     @Override
     public int getRowTop(int index) {
-        return this.getY() + 4 - (int)this.getScrollY() + index * this.itemHeight + this.headerHeight;
+        return this.getY() + 4 - (int)this.getScrollY() + index * this.itemHeight;
     }
 
     public final Identifier SCROLLER_TEXTURE = Identifier.ofVanilla("widget/scroller");
@@ -140,7 +142,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
            int bottomY = this.getRowBottom(index);
            if (bottomY >= this.getY() && y <= this.getBottom()) {
                 // DrawContext context, int mouseX, int mouseY, float delta, int index, int x, int y, int entryWidth, int entryHeight
-              this.renderEntry(ctx, mouseX, mouseY, delta, index, x, y, rowWidth, rowHeight);
+              this.renderEntry(ctx, mouseX, mouseY, delta, this.getEntryAtPosition(x, y));
            }
         }
   
@@ -167,7 +169,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
                                 .stream()
                                 .map(x->{
                                     return new EnchantmentWithLevel(
-                                        EnchantmentWithLevel.EnchantmentToIdentifier(x.getKey().value(), this.player.getWorld()),
+                                        EnchantmentWithLevel.EnchantmentToIdentifier(x.getKey().value(), this.player.getEntityWorld()),
                                         x.getIntValue()
                                     );
                                 })
@@ -176,14 +178,14 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
             unlocked_enchantements;
 
         available_enchantements.stream().filter(enchantWithLevel->{
-            var enchant = EnchantmentWithLevel.IdentifierToEnchantment(enchantWithLevel.enchantment_id(), this.player.getWorld());
+            var enchant = EnchantmentWithLevel.IdentifierToEnchantment(enchantWithLevel.enchantment_id(), this.player.getEntityWorld());
             return enchantable_item.isOf(Items.BOOK) || enchantable_item.isOf(Items.ENCHANTED_BOOK) || enchant.isSupportedItem(enchantable_item);
         }).sorted((e1, e2) -> {
             var name1 = Enchantment.getName(
-                EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(e1.enchantment_id(), this.player.getWorld()), 1
+                EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(e1.enchantment_id(), this.player.getEntityWorld()), 1
             ).toString();
             var name2 = Enchantment.getName(
-                EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(e2.enchantment_id(), this.player.getWorld()), 1
+                EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(e2.enchantment_id(), this.player.getEntityWorld()), 1
             ).toString();
             int nameComparison = name1.compareTo(name2);
             if (nameComparison != 0) return nameComparison; // Sort by name alphabetically
@@ -229,7 +231,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
             this.enchant_level = enchantWithLevel.enchantment_level();
             this.cost = cost;
             this.xp_level_cost = xp_level_cost;
-            this.enchantment = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchantWithLevel.enchantment_id(), this.player.getWorld());
+            this.enchantment = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchantWithLevel.enchantment_id(), this.player.getEntityWorld());
             this.overridenEnchant = EnchantmentHelper.getEnchantments(enchantable_item)
                 .getEnchantmentEntries()
                 .stream()
@@ -237,7 +239,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
                     !Enchantment.canBeCombined(enchant_x_level.getKey(), this.enchantment) // || enchant_x_level.getKey().equals(this.enchantment)
                 ).map(enchant_x_level->
                     new EnchantmentWithLevel(
-                        EnchantmentWithLevel.EnchantmentToIdentifier(enchant_x_level.getKey().value(), this.player.getWorld()),
+                        EnchantmentWithLevel.EnchantmentToIdentifier(enchant_x_level.getKey().value(), this.player.getEntityWorld()),
                         enchant_x_level.getIntValue()
                     )
                 )
@@ -276,7 +278,7 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
 
 	
 		@Override
-		public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		public boolean mouseClicked(Click click, boolean doubled) {
             return serverSendApplyEnchant();
 		}
 
@@ -292,17 +294,16 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
         
         @Override
         public void render(
-            DrawContext ctx, int i,
-            int dy, int dx,
-            int dw, int dh,
-            int mouseX, int mouseY,
-            boolean hovered, float tickDelta
+
+            DrawContext ctx, int mouseX, int mouseY, boolean hovered, float deltaTicks
+
         ) {
+            
             var tr = client.textRenderer;
-            var x = dx +1;
-            var w = dw-2;
-            var h = dh;
-            var y = dy;
+            var x = this.getX() +1;
+            var w = this.getWidth()-2;
+            var h = this.getHeight();
+            var y = this.getY();
             
             var lightGrey   = 0xFF919191;
             var grey        = 0xFF717171;
@@ -348,21 +349,21 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
             } else if (sameEnchantLevelDiff.isPresent() && sameEnchantLevelDiff.getAsInt() > 0) {
 
                 var enchant = firstOverridenEnchant.get();
-                var enchant_entry = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchant.enchantment_id(), this.player.getWorld());
+                var enchant_entry = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchant.enchantment_id(), this.player.getEntityWorld());
                 var overridenEnchantmentName =  Enchantment.getName(enchant_entry, enchant.enchantment_level()).getString();
                 renderText(ctx, "⬆ "+overridenEnchantmentName, overridenEnchantmentX, overridenEnchantmentY, (Float)2.0f/3.0f, lightGreenColor);
 
             } else if (sameEnchantLevelDiff.isPresent() && sameEnchantLevelDiff.getAsInt() < 0) {
 
                 var enchant = firstOverridenEnchant.get();
-                var enchant_entry = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchant.enchantment_id(), this.player.getWorld());
+                var enchant_entry = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchant.enchantment_id(), this.player.getEntityWorld());
                 var overridenEnchantmentName =  Enchantment.getName(enchant_entry, enchant.enchantment_level()).getString();
                 renderText(ctx, "⬇ "+overridenEnchantmentName, overridenEnchantmentX, overridenEnchantmentY, (Float)2.0f/3.0f, lightRedColor);
 
             } else if (firstOverridenEnchant.isPresent() && !enchantable_item.isOf(Items.ENCHANTED_BOOK)) {
 
                 var enchant = firstOverridenEnchant.get();
-                var enchant_entry = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchant.enchantment_id(), this.player.getWorld());
+                var enchant_entry = EnchantmentWithLevel.IdentifierToRegistryEntryEnchantment(enchant.enchantment_id(), this.player.getEntityWorld());
                 var overridenEnchantmentName =  Enchantment.getName(enchant_entry, enchant.enchantment_level()).getString();
                 renderText(ctx, "✖ "+overridenEnchantmentName, overridenEnchantmentX, overridenEnchantmentY, (Float)2.0f/3.0f, lightRedColor); 
 
@@ -420,7 +421,31 @@ public class EnchantementListWidget extends AlwaysSelectedEntryListWidget<Enchan
 
         @Override
         public Text getNarration() {
-            return Enchantment.getName(this.enchantment, enchant_level);
+
+            var enchantText = Text.empty()
+                .append(this.enchantment.value().description())
+                .append(Text.of(" " + this.enchant_level));
+
+            var xpCostText = xpConditionMet() ? (
+                (xp_level_cost == 1) ? Text.translatable("container.enchant.level.one")
+                                     : Text.translatable("container.enchant.level.many", xp_level_cost)
+            ) : Text.translatable("container.enchant.level.requirement", xp_level_cost);
+            var itemCostText = itemCostConditionMet() ?
+                Text.empty()
+                    .append(Text.of(this.cost.getCount() + " "))
+                    .append(this.cost.getName())
+                    :
+                Text.translatable("container.repair.cost", this.cost.getCount())
+                    .append(" ")
+                    .append(this.cost.getName())
+            ;
+            return Text.empty()
+                .append(enchantText)
+                .append(Text.of(". "))
+                .append(itemCostText)
+                .append(Text.of(". "))
+                .append(xpCostText);
         }
+
 	}
 }

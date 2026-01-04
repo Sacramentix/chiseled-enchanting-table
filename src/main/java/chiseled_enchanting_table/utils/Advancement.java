@@ -1,18 +1,21 @@
 package chiseled_enchanting_table.utils;
 
 import chiseled_enchanting_table.ChiseledEnchantingTable;
+import net.minecraft.advancement.AdvancementEntry;
+import net.minecraft.advancement.AdvancementManager;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.world.World;
 
 public class Advancement {
     
     public static void give(PlayerEntity player, String name) {
         if (!(player instanceof net.minecraft.server.network.ServerPlayerEntity serverPlayer)) return;
-        var advancement = serverPlayer.getServer().getAdvancementLoader().get(ChiseledEnchantingTable.identifier(name));
+        var advancement = serverPlayer.getEntityWorld().getServer().getAdvancementLoader().get(ChiseledEnchantingTable.identifier(name));
         if (advancement == null) return;
         var progress = serverPlayer.getAdvancementTracker().getProgress(advancement);
         if (progress.isDone()) return;

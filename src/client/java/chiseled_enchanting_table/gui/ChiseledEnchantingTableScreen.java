@@ -9,6 +9,7 @@ import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.TooltipSubmenuHandler;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -46,7 +47,7 @@ public class ChiseledEnchantingTableScreen extends HandledScreen<ChiseledEnchant
 		this.addDrawableChild(this.scrollContainer);
     }
 
-		@Override
+	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
 		scrollContainer.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 		return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
@@ -69,14 +70,14 @@ public class ChiseledEnchantingTableScreen extends HandledScreen<ChiseledEnchant
 
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		this.scrollContainer.keyPressed(keyCode, scanCode, modifiers);
-		return super.keyPressed(keyCode, scanCode, modifiers);
+	public boolean keyPressed(KeyInput keyInput) {
+		this.scrollContainer.keyPressed(keyInput);
+		return super.keyPressed(keyInput);
 	}
 	@Override
-	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-		this.scrollContainer.keyReleased(keyCode, scanCode, modifiers);
-		return super.keyReleased(keyCode, scanCode, modifiers);
+	public boolean keyReleased(KeyInput keyInput) {
+		this.scrollContainer.keyReleased(keyInput);
+		return super.keyReleased(keyInput);
 	}
 
 	@Override

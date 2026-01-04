@@ -149,7 +149,7 @@ public class ChiseledEnchantingTableBlock extends BlockWithEntity {
 	@Nullable
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state,
 			BlockEntityType<T> type) {
-		return world.isClient ? validateTicker(type, EntityRegistry.CHISELED_ENCHANTING_TABLE_ENTITY_TYPE , ChiseledEnchantingTableBlockEntity::tick)
+		return world.isClient() ? validateTicker(type, EntityRegistry.CHISELED_ENCHANTING_TABLE_ENTITY_TYPE , ChiseledEnchantingTableBlockEntity::tick)
 				: null;
 	}
 
@@ -178,7 +178,7 @@ public class ChiseledEnchantingTableBlock extends BlockWithEntity {
 	}
 
 	protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-		if (world.isClient) {
+		if (world.isClient()) {
 			return ActionResult.SUCCESS;
 		} else {
 			player.openHandledScreen(createChiseledEnchantingTableScreenHandlerFactory(state, world, pos));

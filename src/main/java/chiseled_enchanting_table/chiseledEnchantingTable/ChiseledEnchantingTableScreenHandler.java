@@ -116,7 +116,7 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 				.stream()
 				.map(x->{
 					return new EnchantmentWithLevel(
-						EnchantmentWithLevel.EnchantmentToIdentifier(x.getKey().value(), this.player.getWorld()),
+						EnchantmentWithLevel.EnchantmentToIdentifier(x.getKey().value(), this.player.getEntityWorld()),
 						x.getIntValue()
 					);
 				});
@@ -137,7 +137,7 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 		var new_enchanted_book_enchants = new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
 		EnchantmentHelper.getEnchantments(enchanted_book)
 			.getEnchantmentEntries().stream()
-			.filter(e->!EnchantmentWithLevel.EnchantmentToIdentifier(e.getKey().value(), this.player.getWorld()).equals(payload.enchantment_id))
+			.filter(e->!EnchantmentWithLevel.EnchantmentToIdentifier(e.getKey().value(), this.player.getEntityWorld()).equals(payload.enchantment_id))
 			.forEach(e->new_enchanted_book_enchants.add(e.getKey(), e.getIntValue()));
 		EnchantmentHelper.set(
 			enchanted_book,
@@ -390,7 +390,7 @@ public class ChiseledEnchantingTableScreenHandler extends ScreenHandler {
 
 	public ChiseledEnchantingTableScreenHandler(int syncId, PlayerInventory playerInventory, AvailableEnchantmentPayload payload) {
 		super(ScreenHandlerRegistry.CHISELED_ENCHANTING_TABLE_SCREEN_HANDLER, syncId);
-		this.world = playerInventory.player.getWorld();
+		this.world = playerInventory.player.getEntityWorld();
 		this.player = playerInventory.player;
 		this.unlocked_enchantements =  payload.unlocked_enchantements;
 
