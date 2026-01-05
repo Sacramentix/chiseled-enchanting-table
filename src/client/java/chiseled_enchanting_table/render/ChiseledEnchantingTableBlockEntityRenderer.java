@@ -7,9 +7,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
+import net.minecraft.client.render.block.entity.EnchantingTableBlockEntityRenderer;
 import net.minecraft.client.render.command.ModelCommandRenderer;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.model.BookModel;
@@ -58,14 +60,14 @@ public class ChiseledEnchantingTableBlockEntityRenderer
 	public void render(ChiseledEnchantingTableBlockEntityRenderState CETBERS, MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, CameraRenderState cameraRenderState) {
 		matrixStack.push();
 		matrixStack.translate(0.5F, 0.75F, 0.5F);
-		matrixStack.translate(0.0F, 0.1F + MathHelper.sin(CETBERS.ticks * 0.1F) * 0.01F, 0.0F);
+		matrixStack.translate(0.0F, 0.1F + MathHelper.sin((double)(CETBERS.ticks * 0.1F)) * 0.01F, 0.0F);
 		float f = CETBERS.bookRotationDegrees;
 		matrixStack.multiply(RotationAxis.POSITIVE_Y.rotation(-f));
 		matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(80.0F));
 		float g = MathHelper.fractionalPart(CETBERS.pageAngle + 0.25F) * 1.6F - 0.3F;
 		float h = MathHelper.fractionalPart(CETBERS.pageAngle + 0.75F) * 1.6F - 0.3F;
 		BookModel.BookModelState bookModelState = new BookModel.BookModelState(CETBERS.ticks, MathHelper.clamp(g, 0.0F, 1.0F), MathHelper.clamp(h, 0.0F, 1.0F), CETBERS.pageTurningSpeed);
-		orderedRenderCommandQueue.submitModel(this.book, bookModelState, matrixStack, BOOK_TEXTURE.getRenderLayer(RenderLayer::getEntitySolid), CETBERS.lightmapCoordinates, OverlayTexture.DEFAULT_UV, -1, this.spriteHolder.getSprite(BOOK_TEXTURE), 0, CETBERS.crumblingOverlay);
+		orderedRenderCommandQueue.submitModel(this.book, bookModelState, matrixStack, BOOK_TEXTURE.getRenderLayer(RenderLayers::entitySolid), CETBERS.lightmapCoordinates, OverlayTexture.DEFAULT_UV, -1, this.spriteHolder.getSprite(BOOK_TEXTURE), 0, CETBERS.crumblingOverlay);
 		matrixStack.pop();
 	}
 

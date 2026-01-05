@@ -28,6 +28,6 @@ public class ChiseledEnchantingTableClient implements ClientModInitializer {
 				view != null && view.getBlockEntityRenderData(pos) instanceof Integer integer ? integer : ChiseledEnchantingTableBlockEntity.DEFAULT_COLOR,
 			BlockRegistry.CHISELED_ENCHANTING_TABLE
 		);
-		BlockRenderLayerMap.putBlock(BlockRegistry.CHISELED_ENCHANTING_TABLE, BlockRenderLayer.CUTOUT_MIPPED);
+		BlockRenderLayerMap.putBlock(BlockRegistry.CHISELED_ENCHANTING_TABLE, BlockRenderLayer.CUTOUT);
 	}
 }

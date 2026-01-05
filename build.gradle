@@ -1,7 +1,7 @@
 
  
 plugins {
-	id 'fabric-loom' version '1.11-SNAPSHOT'
+	id 'fabric-loom' version '1.13.6'
 	id 'maven-publish'
 	id "org.jetbrains.kotlin.jvm" version "2.1.20"
 	id "com.modrinth.minotaur" version "2.+"
@@ -15,7 +15,7 @@ modrinth {
     versionNumber = '0.2.3' // The (preferably SemVer) version of the mod. If not specified, it'll use the `version` declaration
     versionName = 'Beta release' // The version title. If not specified, it'll use the version number
     uploadFile = remapJar // Tells Minotaur to use the remapped jar
-    gameVersions = ['1.21.10'] // An array of game versions the version supports
+    gameVersions = ['1.21.11'] // An array of game versions the version supports
     loaders = ['fabric'] // Self-explanatory.
     dependencies = [
             new ModDependency('P7dR8mSH', 'required') // Creates a new required dependency on Fabric API
@@ -71,12 +71,12 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 23
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 	kotlinOptions {
-		jvmTarget = 21
+		jvmTarget = 23
 	}
 }
 
@@ -86,8 +86,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_23
+	targetCompatibility = JavaVersion.VERSION_23
 }
 
 jar {
