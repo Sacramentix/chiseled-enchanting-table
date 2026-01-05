@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 
-// This mixins disable the mechanic of upgrading an echant level using 2 similar enchant of samelevel
+// This mixins disable the mechanic of upgrading an enchant level using 2 similar enchant of samelevel
 
 @Mixin(AnvilScreenHandler.class)
 public class RemoveEnchantMerge {
